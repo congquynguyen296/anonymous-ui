@@ -12,12 +12,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarFooter
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { Button } from './ui/button';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const menuItems = [
   { title: 'Dashboard', url: '/', icon: Home },
@@ -31,6 +34,7 @@ const menuItems = [
 export function AppSidebar() {
   const { subjects } = useAppStore();
   const navigate = useNavigate();
+  const { data, setData } = useAuthStore()
 
   return (
     <Sidebar>
@@ -111,6 +115,13 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
+      <SidebarFooter className="border-t border-sidebar-border px-6 py-4">
+        <Button size="sm" onClick={() => {
+          setData(null);
+        }}>
+          Log out
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }

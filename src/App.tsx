@@ -32,7 +32,7 @@ const App = () => (
           <Route
             path="/*"
             element={
-              // <ProtectedRoute>
+              <ProtectedRoute>
               <SidebarProvider>
                 <div className="flex min-h-screen w-full">
                   <AppSidebar />
@@ -57,7 +57,7 @@ const App = () => (
                   </main>
                 </div>
               </SidebarProvider>
-              // </ProtectedRoute>
+              </ProtectedRoute>
             }
           />
         </Routes>
