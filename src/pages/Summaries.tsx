@@ -2,6 +2,7 @@ import React from "react";
 import fileService from "@/services/file.service";
 import { FileMeta } from "@/type/File";
 import parse from "html-react-parser";
+import { toast } from 'sonner';
 
 interface Summary {
   id: string;
@@ -35,11 +36,14 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
         if (res.result) {
           setFile(res.result);
           setContentHtml(res.result.summaryContent || "");
+          // Optional success toast on load
+          // toast.success("Loaded summary content");
         }
       })
       .catch((e) => {
         setError("Failed to load file");
         console.error(e);
+        toast.error("Failed to load file summary");
       })
       .finally(() => setLoading(false));
   }, []);
@@ -70,7 +74,7 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
               className="px-2 py-1 border rounded-md bg-white"
             >
               <option value="en">English</option>
-              <option value="vi">Vietnamese</option>
+              <option value="vie">Vietnamese</option>
               <option value="zh">Chinese</option>
             </select>
 
@@ -85,10 +89,19 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
                     content: contentHtml,
                     targetLang: selectedLang,
                   });
-                  setContentHtml(res.result || "");
+                  const nextHtml = res.result || "";
+                  const normalize = (s: string) => s.replace(/\s+/g, " ").trim();
+                  if (normalize(nextHtml) === normalize(contentHtml)) {
+                    toast.info("Same language");
+                  } else {
+                    setContentHtml(nextHtml);
+                    const langLabel = { en: "English", vi: "Vietnamese", zh: "Chinese" } as const;
+                    toast.success(`Translated to ${langLabel[selectedLang as keyof typeof langLabel] || selectedLang}`);
+                  }
                 } catch (e) {
                   console.error(e);
                   setError("Failed to translate content");
+                  toast.error("Failed to translate content");
                 } finally {
                   setTranslating(false);
                 }
