@@ -34,8 +34,8 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
       .then((res) => {
         console.log('RESPONSE', res);
         if (res.result) {
-          setFile(res.result);
-          setContentHtml(res.result.summaryContent || "");
+          setFile(res.result.data.file);
+          setContentHtml(res.result.data.file.summaryContent || "");
           // Optional success toast on load
           // toast.success("Loaded summary content");
         }
@@ -48,6 +48,7 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
       .finally(() => setLoading(false));
   }, []);
 
+  console.log('FILE', file)
   return (
     <div className="space-y-6">
       {/* Header */}
