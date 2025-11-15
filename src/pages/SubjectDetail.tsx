@@ -28,7 +28,7 @@ export default function SubjectDetail() {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect( () => {
+  useEffect(() => {
     if (!subjectId) {
       setLoading(false);
       return;
@@ -40,9 +40,9 @@ export default function SubjectDetail() {
       setLoading(false);
     }
     fetchSubject();
-  },[subjectId])
+  }, [subjectId])
 
-   if (loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center space-y-4">
@@ -51,7 +51,7 @@ export default function SubjectDetail() {
       </div>
     );
   }
-  
+
   if (!subject) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -163,7 +163,7 @@ export default function SubjectDetail() {
             <CardHeader className="pb-3">
               <CardDescription>Total Summaries</CardDescription>
               <CardTitle className="text-3xl">
-                {subject?.files?.reduce((acc, f) => acc + f?.summary_content ? 1 : 0, 0)}
+                {subject?.files?.reduce((acc, f) => acc + (f?.summaryContent?.trim() ? 1 : 0), 0)}
               </CardTitle>
             </CardHeader>
           </Card>

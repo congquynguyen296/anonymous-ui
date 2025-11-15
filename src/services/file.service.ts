@@ -6,7 +6,7 @@ import { TranslateHtmlRequest, TranslateHtmlResponse } from "../type/Translate";
 class FileService {
     async getFileById(fileId: string): Promise<ApiResponse<FileMeta>> {
         const res = await axiosClient.axiosInstance.get<ApiResponse<FileMeta>>(
-            `/file/files/${fileId}`
+            `/files/files/${fileId}`
         );
         return res.data;
     }

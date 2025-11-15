@@ -4,27 +4,28 @@ import { SubjectCard } from '@/components/subjects/SubjectCard';
 import { CreateSubjectDialog } from '@/components/subjects/CreateSubjectDialog';
 import { useEffect, useState } from 'react';
 import subjectService from '@/services/subject.service';
-import { SubjectStatsDTO } from '@/services/subject.service'; 
+import { SubjectStatsDTO } from '@/services/subject.service';
 
 export default function Subjects() {
-  const {files, addSubject } = useAppStore();
+  const { files, addSubject } = useAppStore();
   const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
   const fetchSubjects = async () => {
-      const data = await subjectService.getAllSubjectByUser()
-      if (data && data.code && data.code === 200)
-        setSubjects(data.result)
-    }
+    const data = await subjectService.getAllSubjectByUser()
+    if (data && data.code && data.code === 200)
+      console.log(data)
+    setSubjects(data.result)
+  }
   useEffect(() => {
     fetchSubjects()
-  },[])
+  }, [])
   const handleCreateSubject = async (name: string) => {
     const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444'];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    const data = await subjectService.createSubject({name,color: randomColor})
-      if (data && data.code && data.code === 200){
-        toast.success('Subject created successfully');
-        fetchSubjects()
-      }
+    const data = await subjectService.createSubject({ name, color: randomColor })
+    if (data && data.code && data.code === 200) {
+      toast.success('Subject created successfully');
+      fetchSubjects()
+    }
   };
 
   const handleEdit = (id: string) => {
@@ -47,13 +48,13 @@ export default function Subjects() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {subjects.map((subject) => {
-          
+
           return (
             <SubjectCard
               key={subject.id}
               subject={{
                 id: subject.id,
-                name: subject.name, 
+                name: subject.name,
                 color: subject.color
               }}
               onEdit={handleEdit}
