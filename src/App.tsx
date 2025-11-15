@@ -27,7 +27,7 @@ const App = () => (
       <Sonner richColors />
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/auth" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
             path="/*"

@@ -11,6 +11,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useAppStore } from "@/store/useAppStore";
 import { useState } from "react";
+import { FaGoogle } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
+import userService from "@/services/user.service";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -26,6 +30,40 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [searchParams] = useSearchParams()
+  const code = searchParams.get('code')
+  const { data, setData } = useAuthStore()
+  
+
+  useEffect(() => {
+
+    const exchangeTokenForOauth2 = async (authorizationCode: string) => {
+      try {
+        const response = await userService.loginWithGoogle(authorizationCode)
+
+        if (response && response.code === 200) {
+          setData({
+            accessToken: response.result.accessToken,
+            refreshToken: response.result.refreshToken,
+            name: response.result.name,
+            email: response.result.email,
+            avatarUrl: response.result.image,
+          })
+          toast.success('Đăng nhập thành công bằng Google')
+          navigate('/')
+        } else {
+          toast.error(response.message)
+        }
+      } catch (error: unknown) {
+        toast.error((error as any)?.response.data.message || 'Có lỗi trong quá trình xử lý')
+      }
+    }
+
+    if (code) {
+      exchangeTokenForOauth2(code)
+    }
+  }, [code])
+
   const {
     register,
     handleSubmit,
@@ -36,7 +74,7 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
     defaultValues: {
       rememberMe: false,
-    },
+    }
   });
 
   const rememberMe = watch("rememberMe");
@@ -46,6 +84,23 @@ export default function Login() {
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
+
+  //handle login with google
+  const handleLoginWithGoogle = () => {
+    try {
+      const authUri = import.meta.env.VITE_GOOGLE_AUTH_URI as string
+      const callbackUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI as string
+      const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string
+
+      const targetUrl = `${authUri}?redirect_uri=${encodeURIComponent(
+        callbackUri
+      )}&response_type=code&client_id=${googleClientId}&scope=openid%20email%20profile`
+
+      window.location.href = targetUrl
+    } catch (error: unknown) {
+      toast.error(error?.toString() || 'Có lỗi trong quá trình xử lý' )
+    }
+  }
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
@@ -82,7 +137,7 @@ export default function Login() {
         </div>
 
         <div className="rounded-lg border bg-card p-8 shadow-sm">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
               <Input
@@ -154,6 +209,11 @@ export default function Login() {
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign In"}
+            </Button>
+
+            <Button type="button" variant='destructive' className="w-full" disabled={isLoading} onClick={handleLoginWithGoogle}>
+              <FaGoogle className="mr-2" />
+              {isLoading ? "Signing in..." : "Sign In with Google"}
             </Button>
           </form>
 
