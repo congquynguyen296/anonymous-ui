@@ -2,35 +2,33 @@ import { useAppStore } from '@/store/useAppStore';
 import { toast } from 'sonner';
 import { SubjectCard } from '@/components/subjects/SubjectCard';
 import { CreateSubjectDialog } from '@/components/subjects/CreateSubjectDialog';
+import { useEffect, useState } from 'react';
+import subjectService from '@/services/subject.service';
+import { SubjectStatsDTO } from '@/services/subject.service'; 
 
 export default function Subjects() {
-  const { subjects, files, addSubject } = useAppStore();
-
-  const handleCreateSubject = (name: string) => {
+  const {files, addSubject } = useAppStore();
+  const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
+  const fetchSubjects = async () => {
+      const data = await subjectService.getAllSubjectByUser()
+      if (data && data.code && data.code === 200)
+        setSubjects(data.result)
+    }
+  useEffect(() => {
+    fetchSubjects()
+  },[])
+  const handleCreateSubject = async (name: string) => {
     const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444'];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-    addSubject({
-      id: `subj${Date.now()}`,
-      name,
-      folders: [],
-      color: randomColor,
-    });
-
-    toast.success('Subject created successfully');
-  };
-
-  const getSubjectStats = (subjectName: string) => {
-    const subjectFiles = files.filter((f) => f.subject === subjectName);
-    const totalFiles = subjectFiles.length;
-    const totalSummaries = subjectFiles.reduce((acc, f) => acc + f.summaryCount, 0);
-    const totalQuizzes = subjectFiles.reduce((acc, f) => acc + f.quizCount, 0);
-    
-    return { totalFiles, totalSummaries, totalQuizzes };
+    const data = await subjectService.createSubject({name,color: randomColor})
+      if (data && data.code && data.code === 200){
+        toast.success('Subject created successfully');
+        fetchSubjects()
+      }
   };
 
   const handleEdit = (id: string) => {
-    toast.info('Edit functionality coming soon');
+    // toast.info('Edit functionality coming soon');
   };
 
   const handleDelete = (id: string) => {
@@ -49,14 +47,17 @@ export default function Subjects() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {subjects.map((subject) => {
-          const stats = getSubjectStats(subject.name);
           
           return (
             <SubjectCard
               key={subject.id}
-              subject={subject}
-              stats={stats}
+              subject={{
+                id: subject.id,
+                name: subject.name, 
+                color: subject.color
+              }}
               onEdit={handleEdit}
+              stats={subject?.stats}
               onDelete={handleDelete}
             />
           );
