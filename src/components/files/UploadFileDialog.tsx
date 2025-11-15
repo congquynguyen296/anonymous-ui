@@ -11,11 +11,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import FileService from '@/services/file.service';
+import { useToast } from '@/hooks/use-toast';
 
 interface UploadFileDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (fileName: string, file: File) => void;
+  // optional callback if parent wants to be notified after upload
+  onSubmit?: (fileName: string, file: File) => void;
 }
 
 export function UploadFileDialog({
@@ -25,13 +29,41 @@ export function UploadFileDialog({
 }: UploadFileDialogProps) {
   const [fileName, setFileName] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { subjectId: subjectId } = useParams();
+  const { toast } = useToast();
 
-  const handleSubmit = () => {
-    if (fileName.trim() && file) {
-      onSubmit(fileName, file);
+  const handleSubmit = async () => {
+    if (!fileName.trim() || !file) return;
+
+    setIsLoading(true);
+    try {
+      const res = await FileService.uploadFile(file, fileName, subjectId);
+      if (res && res.code === 200 && res.result) {
+        // optional callback for parent
+        if (onSubmit) onSubmit(fileName, file);
+      }
+
+      toast({
+        title: 'Upload successful',
+        description: res?.message ?? 'File uploaded and queued for processing.',
+      });
+
       setFileName('');
       setFile(null);
       onClose();
+    } catch (err: unknown) {
+      console.error('Upload failed', err);
+      const message =
+        typeof err === 'object' && err !== null && 'message' in err
+          ? (err as { message?: string }).message
+          : undefined;
+      toast({
+        title: 'Upload failed',
+        description: message ?? 'An error occurred while uploading the file.',
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
