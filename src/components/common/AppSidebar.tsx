@@ -22,8 +22,9 @@ import {
 } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import userService from '@/services/user.service';
+import subjectService, { SubjectStatsDTO } from '@/services/subject.service';
 
 const menuItems = [
   { title: 'Dashboard', url: '/', icon: Home },
@@ -35,11 +36,12 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { subjects, user } = useAppStore();
+  const {user } = useAppStore();
   const navigate = useNavigate();
   const { data, setData } = useAuthStore();
   const logout = () => setData(null)
 
+  const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
   // useEffect(() => {
   //   const fetchUserData = async () => {
   //     try {
@@ -54,6 +56,14 @@ export function AppSidebar() {
     
   // }, [data]);
 
+  const fetchSubjects = async () => {
+        const data = await subjectService.getAllSubjectByUser()
+        if (data && data.code && data.code === 200)
+          setSubjects(data.result)
+      }
+    useEffect(() => {
+      fetchSubjects()
+    },[])
   return (
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border px-6 py-4">
