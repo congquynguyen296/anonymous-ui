@@ -9,7 +9,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated } = useAppStore();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/auth" replace />;
   }
 
   return <>{children}</>;
