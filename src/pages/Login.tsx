@@ -33,6 +33,7 @@ export default function Login() {
   const [searchParams] = useSearchParams()
   const code = searchParams.get('code')
   const { data, setData } = useAuthStore()
+  
 
   useEffect(() => {
 
