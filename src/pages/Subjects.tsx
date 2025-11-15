@@ -1,14 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useAppStore } from '@/store/useAppStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FolderOpen, Plus, Edit, Trash2 } from 'lucide-react';
+import { FolderOpen, Plus, Edit, Trash2, ArrowRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
 export default function Subjects() {
+  const navigate = useNavigate();
   const { subjects, files, addSubject } = useAppStore();
   const [isOpen, setIsOpen] = useState(false);
   const [newSubjectName, setNewSubjectName] = useState('');
@@ -84,7 +86,11 @@ export default function Subjects() {
           const stats = getSubjectStats(subject.name);
           
           return (
-            <Card key={subject.id} className="transition-shadow hover:shadow-lg">
+            <Card
+              key={subject.id}
+              className="transition-shadow hover:shadow-lg cursor-pointer group"
+              onClick={() => navigate(`/subject/${subject.id}`)}
+            >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -96,11 +102,27 @@ export default function Subjects() {
                     </div>
                     <CardTitle className="text-xl">{subject.name}</CardTitle>
                   </div>
-                  <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toast.info('Edit functionality coming soon');
+                      }}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toast.info('Delete functionality coming soon');
+                      }}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -141,6 +163,18 @@ export default function Subjects() {
                       )}
                     </div>
                   </div>
+
+                  <Button
+                    variant="outline"
+                    className="w-full mt-2 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/subject/${subject.id}`);
+                    }}
+                  >
+                    View Files
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>

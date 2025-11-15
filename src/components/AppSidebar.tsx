@@ -1,5 +1,7 @@
-import { Home, FolderOpen, Upload, History, Settings, BookOpen, Brain } from 'lucide-react';
+import { Home, FolderOpen, Upload, Settings, BookOpen, Brain, ChevronRight } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
+import { useAppStore } from '@/store/useAppStore';
+import { useNavigate } from 'react-router';
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +13,11 @@ import {
   SidebarMenuItem,
   SidebarHeader,
 } from '@/components/ui/sidebar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 const menuItems = [
   { title: 'Dashboard', url: '/', icon: Home },
@@ -22,6 +29,9 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
+  const { subjects } = useAppStore();
+  const navigate = useNavigate();
+
   return (
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border px-6 py-4">
@@ -57,6 +67,49 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {subjects.length > 0 && (
+          <SidebarGroup>
+            <Collapsible defaultOpen className="group/collapsible">
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger className="flex w-full items-center justify-between">
+                  <span>My Subjects</span>
+                  <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {subjects.slice(0, 5).map((subject) => (
+                      <SidebarMenuItem key={subject.id}>
+                        <SidebarMenuButton
+                          onClick={() => navigate(`/subject/${subject.id}`)}
+                          className="flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer"
+                        >
+                          <div
+                            className="h-2 w-2 rounded-full"
+                            style={{ backgroundColor: subject.color }}
+                          />
+                          <span className="truncate">{subject.name}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                    {subjects.length > 5 && (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          onClick={() => navigate('/subjects')}
+                          className="text-xs text-sidebar-foreground/60 hover:text-sidebar-foreground cursor-pointer"
+                        >
+                          View all {subjects.length} subjects →
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          </SidebarGroup>
+        )}
       </SidebarContent>
     </Sidebar>
   );
