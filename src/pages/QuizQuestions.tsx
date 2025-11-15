@@ -3,12 +3,13 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Brain, Loader2, CheckCircle2, Circle } from "lucide-react";
+import { ArrowLeft, Brain, CheckCircle2, Circle } from "lucide-react";
 import fileService, {
   Question,
   QuizApiResponse,
 } from "@/services/file.service";
 import { toast } from "sonner";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function QuizQuestions() {
   const { quizId } = useParams<{ quizId: string }>();
@@ -150,7 +151,7 @@ export default function QuizQuestions() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
         <div className="max-w-4xl mx-auto flex items-center justify-center h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+          <LoadingSpinner message="Đang tải câu hỏi..." variant="inline" size="lg" />
         </div>
       </div>
     );

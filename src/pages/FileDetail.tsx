@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useAppStore } from '@/store/useAppStore';
-import { FileText, BookOpen, Brain, Loader2 } from 'lucide-react';
+import { FileText, BookOpen, Brain } from 'lucide-react';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -25,7 +26,7 @@ export default function FileDetail() {
   if (!file) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+        <LoadingSpinner message="Đang tải file..." variant="inline" size="lg" />
       </div>
     );
   }
