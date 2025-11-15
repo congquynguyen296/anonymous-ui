@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 import FileService, { FileDto, SummaryDto, QuizDto, FileDetailData } from '@/services/file.service';
 import { useAppStore, Summary as StoreSummary, Quiz as StoreQuiz } from '@/store/useAppStore';
-import { Button } from '@/components/ui/button';
-import { FileText, BookOpen, Brain, Loader2 } from 'lucide-react';
+import { FileText, BookOpen, Brain } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -43,6 +43,7 @@ export default function FileDetail() {
         fileId: fileId ?? '',
         fileName: fetchedFile?.name ?? files.find((f) => f.id === fileId)?.name ?? '',
         subject: subject?.name ?? '',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         difficulty: (q as any).difficulty ?? 'Medium',
         questions: [],
         createdAt: q.createdAt ?? new Date().toISOString(),
@@ -108,7 +109,7 @@ export default function FileDetail() {
   if (!file) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+        <LoadingSpinner message="Đang tải file..." variant="inline" size="lg" />
       </div>
     );
   }

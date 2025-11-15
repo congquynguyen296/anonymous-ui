@@ -3,6 +3,7 @@ import fileService from "@/services/file.service";
 import { FileMeta } from "@/type/File";
 import parse from "html-react-parser";
 import { toast } from 'sonner';
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 interface Summary {
   id: string;
@@ -117,7 +118,7 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
 
       {/* CONTENT */}
       <div className="prose prose-sm max-w-none">
-        {loading && <p>Loading content...</p>}
+        {loading && <LoadingSpinner message="Đang tải nội dung..." variant="inline" size="md" />}
         {error && !loading && <p className="text-red-600">{error}</p>}
         {!loading && !error && parse(contentHtml || '')}
       </div>

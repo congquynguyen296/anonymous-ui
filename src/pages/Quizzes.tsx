@@ -3,7 +3,7 @@ import { QuizCard } from '@/components/quizzes/QuizCard';
 import { QuizEmptyState } from '@/components/quizzes/QuizEmptyState';
 import fileService, { QuizApiResponse } from '@/services/file.service';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 export default function Quizzes() {
   const [quizzes, setQuizzes] = useState<QuizApiResponse[]>([]);
@@ -33,7 +33,7 @@ export default function Quizzes() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+        <LoadingSpinner message="Đang tải danh sách quiz..." variant="inline" size="lg" />
       </div>
     );
   }

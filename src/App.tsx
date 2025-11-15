@@ -8,10 +8,8 @@ import { AppSidebar } from "@/components/common/AppSidebar";
 import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import Index from "./pages/Index";
 import Subjects from "./pages/Subjects";
-import Upload from "./pages/Upload";
 import Summaries from "./pages/Summaries";
 import Quizzes from "./pages/Quizzes";
-import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
@@ -53,10 +51,8 @@ const App = () => (
                           path="/quiz/:quizId/questions"
                           element={<QuizQuestions />}
                         />
-                        <Route path="/upload" element={<Upload />} />
                         <Route path="/summaries" element={<Summaries />} />
                         <Route path="/quizzes" element={<Quizzes />} />
-                        <Route path="/settings" element={<Settings />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>

@@ -11,9 +11,9 @@ import {
   Trash2,
   CheckCircle2,
   XCircle,
-  Loader2,
   RotateCcw,
 } from "lucide-react";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import fileService, { QuizApiResponse } from "@/services/file.service";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -80,7 +80,7 @@ export function QuizzesTab({ fileId, onCountChange }: QuizzesTabProps) {
       <Card className="border-0 shadow-xl">
         <CardContent className="py-16">
           <div className="flex items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+            <LoadingSpinner message="Đang tải quiz..." variant="inline" size="md" />
           </div>
         </CardContent>
       </Card>

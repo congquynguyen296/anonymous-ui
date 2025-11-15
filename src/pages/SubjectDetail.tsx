@@ -4,7 +4,8 @@ import { useAppStore } from "@/store/useAppStore";
 import { toast } from "sonner";
 import { FileTableRow } from "@/components/files/FileTableRow";
 import { UploadFileDialog } from "@/components/files/UploadFileDialog";
-import { FileText, Upload, ArrowLeft, FileIcon, Loader2 } from "lucide-react";
+import { FileText, Upload, ArrowLeft, FileIcon } from "lucide-react";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -55,7 +56,7 @@ export default function SubjectDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+        <LoadingSpinner message="Đang tải môn học..." variant="inline" size="lg" />
       </div>
     );
   }
