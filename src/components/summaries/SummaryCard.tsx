@@ -17,7 +17,8 @@ interface SummaryCardProps {
   onToggleImportant?: (id: string) => void;
   onDelete?: (id: string) => void;
   onViewDetail?: (id: string) => void;
-  onTranslate?: (id: string, language: string) => void;
+  // translation may be async, accept both sync and async handlers
+  onTranslate?: (id: string, language: string) => void | Promise<void>;
   fullWidth?: boolean;
 }
 
@@ -99,9 +100,12 @@ export function SummaryCard({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="rounded-lg bg-muted p-4">
-          <p className="text-sm leading-relaxed whitespace-pre-line">
-            {summary.content}
-          </p>
+          {/* summary.content may contain HTML from the server (excerpt). Render it as HTML.
+              Ensure the backend output is trusted or sanitized to avoid XSS. */}
+          <div
+            className="text-sm leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: summary.content }}
+          />
         </div>
 
         <div>

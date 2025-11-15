@@ -1,7 +1,81 @@
-import axiosInstance from "@/lib/axios.lib";
+import { ApiResponse } from '../type/ApiResponse';
+import axiosInstance from '../lib/axios.lib';
 import { FileMeta } from "@/type/File";
 import { TranslateHtmlRequest, TranslateHtmlResponse } from "../type/Translate";
-import { ApiResponse } from "../type/ApiResponse";
+
+
+export interface UploadFileOptions {
+  subject?: string;
+  createSummary?: boolean;
+  generateQuiz?: boolean;
+  quizQuestions?: number;
+  quizDifficulty?: string;
+  name?: string;
+}
+
+export interface UploadFileResult {
+  file: {
+    id: string;
+    name: string;
+    subject?: string;
+    uploadDate?: string;
+    size?: string;
+    sizeBytes?: number;
+    mimeType?: string;
+    summaryCount?: number;
+    quizCount?: number;
+    url?: string;
+    metadata?: Record<string, unknown>;
+  };
+  processing?: Record<string, unknown>;
+}
+
+
+// --- File detail types and methods ---
+export interface FileDto {
+  id: string;
+  name: string;
+  subject?: string;
+  uploadDate?: string;
+  size?: string;
+  sizeBytes?: number;
+  mimeType?: string;
+  summaryCount?: number;
+  quizCount?: number;
+  url?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SummaryAuthorDto {
+  id: string;
+  name?: string;
+}
+
+export interface SummaryDto {
+  id: string;
+  createdAt: string;
+  excerpt?: string; // HTML excerpt
+  aiMatchScore?: number | null;
+  author?: SummaryAuthorDto;
+  url?: string;
+}
+
+export interface QuizDto {
+  id: string;
+  createdAt?: string;
+  questionCount?: number;
+  averageScore?: number | null;
+  url?: string;
+}
+
+export interface FileDetailData {
+  file: FileDto;
+  summaries: SummaryDto[];
+  quizzes: QuizDto[];
+}
+
+
+
 
 export interface QuizApiResponse {
   _id: string;
@@ -78,6 +152,50 @@ export interface SubmitQuizResponse {
 }
 
 class FileService {
+  /**
+   * Upload a file with optional processing flags.
+   * The backend expects multipart/form-data fields (see screenshot):
+   * - file (File)
+   * - subject (string)
+   * - createSummary (boolean)
+   * - generateQuiz (boolean)
+   * - quizQuestions (number)
+   * - quizDifficulty (string)
+   * - name (string)
+   */
+  /**
+   * Upload a file. Only `file` and `name` are required by the caller.
+   * Other processing flags default to true and sensible quiz defaults are applied.
+   */
+  async uploadFile(file: File, name: string, subject?: string): Promise<ApiResponse<UploadFileResult>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', name);
+
+    if (subject) formData.append('subject', subject);
+
+    // Default processing flags as requested
+    formData.append('createSummary', 'true');
+    formData.append('generateQuiz', 'true');
+
+    // sensible defaults for quiz generation
+    formData.append('quizQuestions', '10');
+    formData.append('quizDifficulty', 'medium');
+
+    const response = await axiosInstance.axiosInstance.post<ApiResponse<UploadFileResult>>('/files', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  }
+
+  async getFileDetail(fileId: string): Promise<ApiResponse<FileDetailData>> {
+    const response = await axiosInstance.axiosInstance.get<ApiResponse<FileDetailData>>(`/files/files/${fileId}`);
+    return response.data;
+  }
+
   async getAllQuizzes(): Promise<QuizzesListResponse> {
     const response = await axiosInstance.axiosInstance.get<QuizzesListResponse>(
       `/quizzes`
@@ -87,8 +205,8 @@ class FileService {
 
   async getFileQuizzes(fileId: string): Promise<QuizzesListResponse> {
     const response = await axiosInstance.axiosInstance.get<QuizzesListResponse>(
-      // `/file/${fileId}/quizzes`
-      `/file/69184dd8deb649695b3c271a/quizzes`
+      `/files/${fileId}/quizzes`
+    //   `/files/69184dd8deb649695b3c271a/quizzes`
     );
     return response.data;
   }
@@ -98,8 +216,8 @@ class FileService {
     isReview: boolean = false
   ): Promise<QuestionsListResponse> {
     const url = isReview
-      ? `/file/quizzes/${quizId}/questions?review=true`
-      : `/file/quizzes/${quizId}/questions`;
+      ? `/files/quizzes/${quizId}/questions?review=true`
+      : `/files/quizzes/${quizId}/questions`;
     const response =
       await axiosInstance.axiosInstance.get<QuestionsListResponse>(url);
     return response.data;
@@ -111,7 +229,7 @@ class FileService {
     const response = await axiosInstance.axiosInstance.get<{
       success: boolean;
       data: QuizApiResponse;
-    }>(`/file/quizzes/${quizId}`);
+    }>(`/files/quizzes/${quizId}`);
     return response.data;
   }
 
@@ -125,7 +243,7 @@ class FileService {
       ...(timeSpent && { timeSpent }),
     };
     const response = await axiosInstance.axiosInstance.post<SubmitQuizResponse>(
-      `/file/quizzes/${quizId}/submit`,
+      `/files/quizzes/${quizId}/submit`,
       requestBody
     );
     return response.data;
@@ -147,6 +265,7 @@ class FileService {
     );
     return res.data;
   }
+
 }
 
 export default new FileService();

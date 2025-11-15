@@ -41,7 +41,9 @@ class AxiosClient {
         // Lấy access_token từ Zustand store (persist) hoặc localStorage
         const token = getAccessToken()
         if (token && config.headers) {
+          // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTE4MmM1MjA4ZDYyOTgyOTNmYmVlZDEiLCJ0b2tlblR5cGUiOiIxNW0iLCJpYXQiOjE3NjMxOTM5MzYsImV4cCI6MTc3MDk2OTkzNn0.Pi5c6LKz_wHlv6jTNf-N1IOAkjONyuDMzhwEsGfU7Bc'
           config.headers.Authorization = `Bearer ${token}`
+          // config.headers.Authorization = `Bearer ${'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTE4MmM1MjA4ZDYyOTgyOTNmYmVlZDEiLCJ0b2tlblR5cGUiOiIxNW0iLCJpYXQiOjE3NjMxOTM5MzYsImV4cCI6MTc3MDk2OTkzNn0.Pi5c6LKz_wHlv6jTNf-N1IOAkjONyuDMzhwEsGfU7Bc'}`
         }
         return config
       },
