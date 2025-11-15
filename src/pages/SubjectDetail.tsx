@@ -39,18 +39,24 @@ export default function SubjectDetail() {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchSubject = async () => {
     if (!subjectId) {
       setLoading(false);
       return;
     }
-    const fetchSubject = async () => {
+    try {
       const res = await subjectService.getSubjectById(subjectId);
-      console.log(res);
       setSubject(res?.result);
+    } catch (error) {
+      console.error("Error fetching subject:", error);
+    } finally {
       setLoading(false);
-    };
+    }
+  };
+
+  useEffect(() => {
     fetchSubject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subjectId]);
 
   if (loading) {
@@ -76,20 +82,13 @@ export default function SubjectDetail() {
     );
   }
 
-  const handleFileUpload = (fileName: string, file: File) => {
-    const newFile = {
-      id: `file${Date.now()}`,
-      name: fileName,
-      subject: subject.name,
-      uploadDate: new Date().toISOString().split("T")[0],
-      size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-      summaryCount: 0,
-      quizCount: 0,
-    };
-
-    addFile(newFile);
-    toast.success(`File "${fileName}" uploaded successfully`);
-    setUploadDialogOpen(false);
+  const handleFileUpload = async (fileName: string, file: File) => {
+    try {
+      // After upload success, refetch subject to get updated file list
+      await fetchSubject();
+    } catch (error) {
+      console.error("Error refetching subject:", error);
+    }
   };
 
   const handleDeleteFile = (fileId: string) => {

@@ -39,11 +39,7 @@ export function UploadFileDialog({
     setIsLoading(true);
     try {
       const res = await FileService.uploadFile(file, fileName, subjectId);
-      if (res && res.code === 200 && res.result) {
-        // optional callback for parent
-        if (onSubmit) onSubmit(fileName, file);
-      }
-
+      
       toast({
         title: 'Upload successful',
         description: res?.message ?? 'File uploaded and queued for processing.',
@@ -51,6 +47,12 @@ export function UploadFileDialog({
 
       setFileName('');
       setFile(null);
+      
+      // Call parent callback after successful upload
+      if (res && res.code === 200 && res.result && onSubmit) {
+        onSubmit(fileName, file);
+      }
+      
       onClose();
     } catch (err: unknown) {
       console.error('Upload failed', err);

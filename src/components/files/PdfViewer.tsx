@@ -1,45 +1,116 @@
-import React, { useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import { Button } from '@/components/ui/button';
-
-// Configure worker - fallback to CDN. If you prefer local worker, update path accordingly.
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Loader2,
+  AlertCircle,
+  ExternalLink,
+  Download,
+} from "lucide-react";
 
 interface PdfViewerProps {
   url: string;
 }
 
 export function PdfViewer({ url }: PdfViewerProps) {
-  const [numPages, setNumPages] = useState<number>(0);
-  const [pageNumber, setPageNumber] = useState<number>(1);
-  const [scale, setScale] = useState<number>(1.0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    setNumPages(numPages);
-    setPageNumber(1);
+  const handleLoad = () => {
+    setLoading(false);
+    setError(false);
+  };
+
+  const handleError = () => {
+    setLoading(false);
+    setError(true);
+  };
+
+  const openInNewTab = () => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const downloadFile = () => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop() || 'document.pdf';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 space-y-4">
+        <AlertCircle className="h-16 w-16 text-red-500" />
+        <h3 className="text-lg font-semibold text-gray-900">
+          Failed to load PDF
+        </h3>
+        <p className="text-sm text-gray-600 text-center max-w-md">
+          Unable to display the PDF in the browser.
+        </p>
+        <div className="flex gap-2">
+          <Button onClick={openInNewTab} variant="outline" className="gap-2">
+            <ExternalLink className="h-4 w-4" />
+            Open in New Tab
+          </Button>
+          <Button onClick={downloadFile} className="gap-2">
+            <Download className="h-4 w-4" />
+            Download
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Button size="sm" variant="outline" onClick={() => setPageNumber((p) => Math.max(1, p - 1))}>
-          Prev
-        </Button>
-        <div className="text-sm">Page {pageNumber} / {numPages || '–'}</div>
-        <Button size="sm" variant="outline" onClick={() => setPageNumber((p) => Math.min(numPages || p, p + 1))}>
-          Next
-        </Button>
-        <div className="ml-auto flex items-center gap-2">
-          <Button size="sm" variant="outline" onClick={() => setScale((s) => Math.max(0.5, s - 0.25))}>-</Button>
-          <div className="text-sm">{Math.round(scale * 100)}%</div>
-          <Button size="sm" variant="outline" onClick={() => setScale((s) => Math.min(3, s + 0.25))}>+</Button>
+      {/* Controls */}
+      <div className="flex items-center justify-between gap-4 flex-wrap bg-gray-50 p-3 rounded-lg">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-700">
+            PDF Document
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={openInNewTab}
+            className="gap-2"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span className="hidden sm:inline">Open in New Tab</span>
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={downloadFile}
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Download</span>
+          </Button>
         </div>
       </div>
 
-      <div className="border bg-white">
-        <Document file={url} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="p-6">Loading PDF…</div>}>
-          <Page pageNumber={pageNumber} scale={scale} />
-        </Document>
+      {/* PDF Display using Google Docs Viewer */}
+      <div className="relative border rounded-lg bg-white overflow-hidden h-[75vh] mt-2">
+        {loading && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
+            <Loader2 className="h-8 w-8 animate-spin text-purple-600 mb-3" />
+            <p className="text-sm text-gray-600">Loading PDF...</p>
+          </div>
+        )}
+        <iframe
+          src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`}
+          className="w-full h-full"
+          frameBorder="0"
+          onLoad={handleLoad}
+          onError={handleError}
+          title="PDF Viewer"
+        />
       </div>
     </div>
   );
