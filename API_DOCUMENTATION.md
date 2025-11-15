@@ -263,7 +263,6 @@ Authorization: Bearer <token>
     {
       "id": "subj1",
       "name": "Mathematics",
-      "folders": ["Calculus", "Algebra", "Statistics"],
       "color": "#3B82F6",
       "createdAt": "2025-01-01T00:00:00Z",
       "stats": {
