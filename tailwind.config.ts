@@ -4,6 +4,52 @@ export default {
   darkMode: ["class"],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
+  safelist: [
+    // ===== Typography =====
+    'text-xs', 'text-sm', 'text-base', 'text-lg', 'text-xl',
+    'text-2xl', 'text-3xl', 'text-4xl',
+    'font-light', 'font-normal', 'font-medium', 'font-semibold', 'font-bold',
+    'leading-tight', 'leading-snug', 'leading-normal', 'leading-relaxed',
+
+    // ===== Color =====
+    'text-gray-700', 'text-gray-800', 'text-gray-900',
+    'text-gray-500', 'text-gray-600',
+    'text-red-500', 'text-blue-500', 'text-green-500',
+    'bg-white', 'bg-gray-100', 'bg-gray-200', 'bg-gray-50',
+    'bg-blue-50', 'bg-red-50', 'bg-yellow-50',
+
+    // ===== Spacing =====
+    'p-2', 'p-4', 'p-6',
+    'm-2', 'm-4', 'm-6',
+    'my-2', 'my-4', 'my-6',
+    'mx-2', 'mx-4', 'mx-6',
+    'py-2', 'py-4', 'py-6',
+    'px-2', 'px-4', 'px-6',
+
+    // ===== Border & Radius =====
+    'border', 'border-2', 'border-gray-200', 'border-gray-300',
+    'rounded', 'rounded-sm', 'rounded-md', 'rounded-lg', 'rounded-xl',
+
+    // ===== Shadow =====
+    'shadow', 'shadow-sm', 'shadow-md', 'shadow-lg',
+
+    // ===== Layout =====
+    'flex', 'flex-col', 'flex-row', 'items-center', 'justify-center', 'justify-between',
+    'gap-2', 'gap-4', 'gap-6',
+
+    'grid', 'grid-cols-1', 'grid-cols-2', 'grid-cols-3',
+    'w-full', 'max-w-md', 'max-w-lg', 'max-w-xl',
+
+    // ===== Lists =====
+    'list-disc', 'list-decimal', 'list-inside',
+    'space-y-2', 'space-y-4',
+
+    // ===== Text alignment =====
+    'text-left', 'text-center', 'text-right',
+
+    // ===== Pattern (bảo hiểm cho mọi class AI tạo) =====
+    { pattern: /^(bg|text|p|m|my|mx|py|px|border|rounded|leading|font|shadow|flex|grid|gap|list|space|w|max-w|items|justify|text)-(.*)$/ }
+  ],
   theme: {
     container: {
       center: true,
@@ -99,5 +145,5 @@ export default {
     },
   },
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography')],
 } satisfies Config;

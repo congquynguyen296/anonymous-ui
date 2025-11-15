@@ -1,5 +1,5 @@
 import { ApiResponse } from "../type/ApiResponse";
-import axiosInstance from "../lib/axios.lib";
+import { axiosClient } from "../lib/axios.lib";
 
 interface LoginWithGoogleResponse {
   valid: boolean;
@@ -30,20 +30,20 @@ export interface UserStatisticsResponse {
 }
 
 class UserService {
-    async loginWithGoogle(code: string): Promise<ApiResponse<LoginWithGoogleResponse>> {
-      const response = await axiosInstance.axiosInstance.post<ApiResponse<LoginWithGoogleResponse>>(`/auth/google?code=${code}`);
-      return response.data;
-    }
+  async loginWithGoogle(code: string): Promise<ApiResponse<LoginWithGoogleResponse>> {
+    const response = await axiosClient.axiosInstance.post<ApiResponse<LoginWithGoogleResponse>>(`/auth/google?code=${code}`);
+    return response.data;
+  }
 
-    async getUserProfile(): Promise<ApiResponse<UserProfileResponse>> {
-      const response = await axiosInstance.axiosInstance.get<ApiResponse<UserProfileResponse>>(`/user/profile`);
-      return response.data;
-    }
+  async getUserProfile(): Promise<ApiResponse<UserProfileResponse>> {
+    const response = await axiosClient.axiosInstance.get<ApiResponse<UserProfileResponse>>(`/user/profile`);
+    return response.data;
+  }
 
-    async getUserStatistics(): Promise<ApiResponse<UserStatisticsResponse>> {
-      const response = await axiosInstance.axiosInstance.get<ApiResponse<UserStatisticsResponse>>(`/user/statistics`);
-      return response.data;
-    }
+  async getUserStatistics(): Promise<ApiResponse<UserStatisticsResponse>> {
+    const response = await axiosClient.axiosInstance.get<ApiResponse<UserStatisticsResponse>>(`/user/statistics`);
+    return response.data;
+  }
 }
 
 export default new UserService();
