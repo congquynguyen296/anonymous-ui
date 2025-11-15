@@ -1,6 +1,7 @@
-import { Home, FolderOpen, Upload, Settings, BookOpen, Brain, ChevronRight } from 'lucide-react';
+import { Home, FolderOpen, Upload, Settings, BookOpen, Brain, ChevronRight, LogOut, User } from 'lucide-react';
 import { NavLink } from '@/components/common/NavLink';
 import { useAppStore } from '@/store/useAppStore';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router';
 import {
   Sidebar,
@@ -12,12 +13,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarFooter
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
+import userService from '@/services/user.service';
 
 const menuItems = [
   { title: 'Dashboard', url: '/', icon: Home },
@@ -29,8 +35,24 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { subjects } = useAppStore();
+  const { subjects, user } = useAppStore();
   const navigate = useNavigate();
+  const { data, setData } = useAuthStore();
+  const logout = () => setData(null)
+
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const response = await userService.getUserProfile();
+  //       if (response && response.code === 200 && response.result) {
+  //         setData(response.result);
+  //       }
+  //     } catch (error) {
+  //       console.error('Failed to fetch user data:', error);
+  //     }
+  //   }
+    
+  // }, [data]);
 
   return (
     <Sidebar>
@@ -111,6 +133,34 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
+      <SidebarFooter className="border-t border-sidebar-border p-4">
+        <div className="flex items-center gap-3 p-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
+            <img src={data?.avatarUrl || ''} alt="User Avatar" className="h-10 w-10 rounded-full" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-sidebar-foreground truncate">
+              {data?.name || 'User'}
+            </p>
+            <p className="text-xs text-sidebar-foreground/60 truncate">
+              {data?.email || 'user@example.com'}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              logout();
+              navigate('/login');
+              toast.success('Logged out successfully');
+            }}
+            className="hover:bg-red-50 hover:text-red-600"
+            title="Logout"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
