@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Brain, CheckCircle2, Circle } from "lucide-react";
 import fileService, {
@@ -338,6 +338,15 @@ export default function QuizQuestions() {
                     })}
                   </div>
                 </CardContent>
+                <CardFooter>
+                  <p>
+                      {isReviewMode && selectedAnswer !== undefined && (
+                        <span className="text-sm text-gray-600 italic">
+                          Explaning: {question.explanation || "N/A"}
+                        </span>
+                      )}
+                    </p>
+                </CardFooter>
               </Card>
             );
           })}

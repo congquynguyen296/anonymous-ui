@@ -110,6 +110,7 @@ export interface Question {
   userAnswer?: number; // Index of answer that user selected in previous attempt
   createdAt: string;
   updatedAt: string;
+  explanation?: string
 }
 
 export interface QuestionsListResponse {
