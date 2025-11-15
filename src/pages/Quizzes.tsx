@@ -33,7 +33,7 @@ export default function Quizzes() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <LoadingSpinner message="Đang tải danh sách quiz..." variant="inline" size="lg" />
+        <LoadingSpinner message="Loading quizzes..." variant="inline" size="lg" />
       </div>
     );
   }

@@ -108,7 +108,7 @@ export function SummariesTab({ fileId }: SummariesTabProps) {
       <div className="prose prose-lg max-w-none w-full">
         {loading && (
           <LoadingSpinner
-            message="Đang tải nội dung..."
+            message="Loading content..."
             variant="inline"
             size="md"
           />

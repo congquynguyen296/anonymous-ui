@@ -109,7 +109,9 @@ export default function FileDetail() {
   if (!file) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <LoadingSpinner message="Đang tải file..." variant="inline" size="lg" />
+        {isLoading && (
+          <LoadingSpinner message="Loading file..." variant="inline" size="lg" />
+        )}
       </div>
     );
   }

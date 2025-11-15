@@ -16,7 +16,7 @@ interface LoadingSpinnerProps {
 }
 
 export default function LoadingSpinner({ 
-  message = "Đang tải...", 
+  message = "Loading...", 
   variant = "overlay",
   size = "md" 
 }: LoadingSpinnerProps) {

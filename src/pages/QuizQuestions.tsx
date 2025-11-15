@@ -151,7 +151,7 @@ export default function QuizQuestions() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
         <div className="max-w-4xl mx-auto flex items-center justify-center h-screen">
-          <LoadingSpinner message="Đang tải câu hỏi..." variant="inline" size="lg" />
+          <LoadingSpinner message="Loading questions..." variant="inline" size="lg" />
         </div>
       </div>
     );

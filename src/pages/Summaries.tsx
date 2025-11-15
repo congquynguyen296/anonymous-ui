@@ -116,7 +116,7 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
 
       {/* CONTENT */}
       <div className="prose prose-sm max-w-none">
-        {loading && <LoadingSpinner message="Đang tải nội dung..." variant="inline" size="md" />}
+        {loading && <LoadingSpinner message="Loading content..." variant="inline" size="md" />}
         {error && !loading && <p className="text-red-600">{error}</p>}
         {!loading && !error && parse(contentHtml || '')}
       </div>

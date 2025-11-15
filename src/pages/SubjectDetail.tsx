@@ -62,7 +62,7 @@ export default function SubjectDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <LoadingSpinner message="Đang tải môn học..." variant="inline" size="lg" />
+        <LoadingSpinner message="Loading subject..." variant="inline" size="lg" />
       </div>
     );
   }
