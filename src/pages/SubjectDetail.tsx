@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import subjectService, { SubjectStatsDTO } from '@/services/subject.service';
+import subjectService, { SubjectDetailDTO, SubjectStatsDTO } from '@/services/subject.service';
 
 export default function SubjectDetail() {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -21,7 +21,7 @@ export default function SubjectDetail() {
   const { subjects, files, addFile, deleteFile, addSummary } = useAppStore();
 
   // const subject = subjects.find((s) => s.id === subjectId);
-  const [subject, setSubject] = useState<SubjectStatsDTO>()
+  const [subject, setSubject] = useState<SubjectDetailDTO>()
   // const [subjectFiles, setSubjectFiles] = useState()
   const subjectFiles = files.filter((f) => f.subject === subject?.name);
 
@@ -137,7 +137,7 @@ export default function SubjectDetail() {
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">{subject.name}</h1>
                 <p className="text-gray-600 mt-1">
-                  {subjectFiles?.length} file{subjectFiles?.length !== 1 ? 's' : ''}
+                  {subject?.files?.length} file{subject?.files?.length !== 1 ? 's' : ''}
                 </p>
               </div>
             </div>
@@ -156,14 +156,14 @@ export default function SubjectDetail() {
           <Card>
             <CardHeader className="pb-3">
               <CardDescription>Total Files</CardDescription>
-              <CardTitle className="text-3xl">{subjectFiles?.length}</CardTitle>
+              <CardTitle className="text-3xl">{subject?.files?.length}</CardTitle>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader className="pb-3">
               <CardDescription>Total Summaries</CardDescription>
               <CardTitle className="text-3xl">
-                {subjectFiles?.reduce((acc, f) => acc + f.summaryCount, 0)}
+                {subject?.files?.reduce((acc, f) => acc + f?.summary_content ? 1 : 0, 0)}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -171,7 +171,7 @@ export default function SubjectDetail() {
             <CardHeader className="pb-3">
               <CardDescription>Total Quizzes</CardDescription>
               <CardTitle className="text-3xl">
-                {subjectFiles?.reduce((acc, f) => acc + f.quizCount, 0)}
+                {subject?.files?.reduce((acc, f) => acc + f.quizCount, 0)}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -184,7 +184,7 @@ export default function SubjectDetail() {
             <CardDescription>Manage your uploaded files for {subject.name}</CardDescription>
           </CardHeader>
           <CardContent>
-            {subjectFiles.length === 0 ? (
+            {subject?.files?.length === 0 ? (
               <div className="text-center py-12">
                 <FileIcon className="h-16 w-16 mx-auto text-gray-300 mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No files yet</h3>
@@ -210,9 +210,9 @@ export default function SubjectDetail() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {subjectFiles.map((file) => (
+                    {subject?.files?.map((file) => (
                       <FileTableRow
-                        key={file.id}
+                        key={file._id}
                         file={file}
                         onView={handleViewFile}
                         onGenerateSummary={handleGenerateSummary}
