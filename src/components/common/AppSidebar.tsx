@@ -41,6 +41,8 @@ export function AppSidebar() {
   const { data, setData } = useAuthStore();
   const logout = () => setData(null)
 
+  //setData({...data, accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTE4MmM1MjA4ZDYyOTgyOTNmYmVlZDEiLCJ0b2tlblR5cGUiOiIxNW0iLCJpYXQiOjE3NjMxOTM5MzYsImV4cCI6MTc3MDk2OTkzNn0.Pi5c6LKz_wHlv6jTNf-N1IOAkjONyuDMzhwEsGfU7Bc'})
+
   const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
   // useEffect(() => {
   //   const fetchUserData = async () => {

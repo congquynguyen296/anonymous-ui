@@ -74,7 +74,7 @@ export function SubjectCard({ subject, stats, onEdit, onDelete }: SubjectCardPro
               >
                 <FolderOpen className="h-5 w-5" style={{ color: sub.color }} />
               </div>
-              <CardTitle className="text-xl">{sub.name}</CardTitle>
+              <CardTitle className="text-xl line-clamp-1">{sub.name}</CardTitle>
             </div>
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {onEdit && (
