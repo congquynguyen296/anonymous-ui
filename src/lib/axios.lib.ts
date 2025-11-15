@@ -27,7 +27,7 @@ class AxiosClient {
 
   constructor() {
     this.axiosInstance = axios.create({
-      baseURL: 'http://localhost:8017/hackathon',
+      baseURL: 'http://localhost:8017/hackathon/',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -64,4 +64,6 @@ class AxiosClient {
   }
 }
 
-export default new AxiosClient()
+// Provide both default and named export to avoid ESM interop issues
+export const axiosClient = new AxiosClient()
+export default axiosClient

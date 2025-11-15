@@ -31,7 +31,7 @@ export function FileTableRow({
           <div className="min-w-0">
             <div className="font-medium text-gray-900 truncate">{file.name}</div>
             <div className="text-xs text-gray-500 md:hidden">
-               {new Date(file.uploadDate).toLocaleDateString()} • {file.size}
+              {new Date(file.uploadDate).toLocaleDateString()} • {file.size}
             </div>
           </div>
         </div>
@@ -39,16 +39,20 @@ export function FileTableRow({
       <TableCell className="hidden md:table-cell text-gray-600">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-gray-400" />
-           {new Date(file.uploadDate).toLocaleDateString()}
+          {new Date(file.uploadDate).toLocaleDateString()}
         </div>
       </TableCell>
       <TableCell className="hidden md:table-cell text-gray-600">
         {file.size}
       </TableCell>
       <TableCell className="text-center">
-        <Badge variant="secondary" className="font-semibold">
-          {file.summaryCount}
+        <Badge
+          className={`font-semibold ${file.summaryContent?.trim() ? "bg-green-400 text-white" : "bg-gray-200 text-gray-800"
+            }`}
+        >
+          {file.summaryContent?.trim() ? 1 : 0}
         </Badge>
+
       </TableCell>
       <TableCell className="text-center">
         <Badge variant="secondary" className="font-semibold">

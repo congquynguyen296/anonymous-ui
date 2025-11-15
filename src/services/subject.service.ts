@@ -17,7 +17,7 @@ export interface SubjectStatsDTO {
   }
 }
 
-export interface File{
+export interface File {
   _id: string
   name: string // Tên file gốc (ví dụ: "Calculus Notes.pdf")
   type: FileType // Loại file: .docx, .doc, .pdf, .md
@@ -27,7 +27,7 @@ export interface File{
   cloudinaryPublicId?: string // Object key (path) của file trong MinIO bucket (dùng để xóa)
   mimeType?: string // MIME type của file (application/pdf, application/vnd.openxmlformats...)
   subjectId?: string// Tham chiếu đến Subject (môn học)
-  summary_content?: string // Nội dung tóm tắt của file (nếu có)
+  summaryContent?: string // Nội dung tóm tắt của file (nếu có)
   summaryCount: number // Số lượng summaries đã tạo từ file này
   quizCount: number // Số lượng quizzes đã tạo từ file này
   uploadDate: Date // Ngày upload file
@@ -54,19 +54,19 @@ export interface UpdateSubjectInput {
 }
 
 class SubjectService {
-  async getAllSubjectByUser(): Promise<ApiResponse<SubjectStatsDTO[]>>{
+  async getAllSubjectByUser(): Promise<ApiResponse<SubjectStatsDTO[]>> {
     const response = await axiosInstance.axiosInstance.get<ApiResponse<SubjectStatsDTO[]>>(`/subjects`)
     return response.data;
   }
-  async getSubjectById(subjectId: string): Promise<ApiResponse<SubjectDetailDTO>>{
+  async getSubjectById(subjectId: string): Promise<ApiResponse<SubjectDetailDTO>> {
     const response = await axiosInstance.axiosInstance.get<ApiResponse<SubjectDetailDTO>>(`/subject/${encodeURIComponent(subjectId)}`)
     return response.data;
   }
-  async createSubject(data: CreateSubjectInput): Promise<ApiResponse<SubjectStatsDTO>>{
+  async createSubject(data: CreateSubjectInput): Promise<ApiResponse<SubjectStatsDTO>> {
     const response = await axiosInstance.axiosInstance.post<ApiResponse<SubjectStatsDTO>>(`/subjects`, data)
     return response.data;
   }
-  async updateSubject(data): Promise<ApiResponse<SubjectStatsDTO>>{
+  async updateSubject(data): Promise<ApiResponse<SubjectStatsDTO>> {
     const response = await axiosInstance.axiosInstance.put<ApiResponse<SubjectStatsDTO>>(`/subjects`, data)
     return response.data;
   }

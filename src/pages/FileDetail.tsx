@@ -2,8 +2,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import FileService, { FileDto, SummaryDto, QuizDto, FileDetailData } from '@/services/file.service';
 import { useAppStore, Summary as StoreSummary, Quiz as StoreQuiz } from '@/store/useAppStore';
-import { FileText, BookOpen, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { FileText, BookOpen, Brain, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -100,15 +100,15 @@ export default function FileDetail() {
   }, [loadFileDetail, summaries, quizzes, files]);
 
 
+  const fileSummaries = summaries.filter((s) => s.fileId === fileId);
 
   const [activeTab, setActiveTab] = useState('original');
+  const [quizzesCount, setQuizzesCount] = useState<number | null>(null);
 
   if (!file) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-center space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900">Đang tải dữ liệu...</h2>
-        </div>
+        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
       </div>
     );
   }
@@ -180,9 +180,11 @@ export default function FileDetail() {
               <Brain className="h-4 w-4" />
               <span className="hidden sm:inline">Quizzes</span>
               <span className="sm:hidden">Quiz</span>
-              <Badge variant="secondary" className="ml-1">
-                {mappedQuizzes.length}
-              </Badge>
+              {quizzesCount !== null && (
+                <Badge variant="secondary" className="ml-1">
+                  {quizzesCount}
+                </Badge>
+              )}
             </TabsTrigger>
           </TabsList>
 
@@ -205,7 +207,7 @@ export default function FileDetail() {
 
           {/* Quizzes Tab */}
           <TabsContent value="quizzes" className="space-y-4">
-            <QuizzesTab quizzes={mappedQuizzes} />
+            {fileId && <QuizzesTab fileId={fileId} onCountChange={setQuizzesCount} />}
           </TabsContent>
         </Tabs>
       </div>

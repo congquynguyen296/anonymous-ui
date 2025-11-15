@@ -17,6 +17,7 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import SubjectDetail from "./pages/SubjectDetail";
 import FileDetail from "./pages/FileDetail";
+import QuizQuestions from "./pages/QuizQuestions";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,10 @@ const App = () => (
                         <Route
                           path="/subject/:subjectId/file/:fileId"
                           element={<FileDetail />}
+                        />
+                        <Route
+                          path="/quiz/:quizId/questions"
+                          element={<QuizQuestions />}
                         />
                         <Route path="/upload" element={<Upload />} />
                         <Route path="/summaries" element={<Summaries />} />
