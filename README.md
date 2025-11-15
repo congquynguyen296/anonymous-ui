@@ -1,192 +1,73 @@
-# CareerGraph React - Free React Tailwind Admin Dashboard Template
+# Welcome to your Lovable project
 
-CareerGraph is a free and open-source admin dashboard template built on **React and Tailwind CSS**, providing developers
-with everything they need to create a comprehensive, data-driven back-end,
-dashboard, or admin panel solution for upcoming web projects.
+## Project info
 
-With CareerGraph, you get access to all the necessary dashboard UI components, elements, and pages required to build a
-feature-rich and complete dashboard or admin panel. Whether you're building dashboard or admin panel for a complex web
-application or a simple website, CareerGraph is the perfect solution to help you get up and running quickly.
+**URL**: https://lovable.dev/projects/eb16ac5b-dbae-45e2-8579-3d1345d14c48
 
-![CareerGraph React.js Dashboard Preview](./banner.png)
+## How can I edit this code?
 
-## Overview
+There are several ways of editing your application.
 
-CareerGraph provides essential UI components and layouts for building feature-rich, data-driven admin dashboards and
-control panels. It's built on:
+**Use Lovable**
 
-- React 19
-- TypeScript
-- Tailwind CSS
+Simply visit the [Lovable Project](https://lovable.dev/projects/eb16ac5b-dbae-45e2-8579-3d1345d14c48) and start prompting.
 
-### Quick Links
+Changes made via Lovable will be committed automatically to this repo.
 
-- [✨ Visit Website](https://CareerGraph.com)
-- [📄 Documentation](https://CareerGraph.com/docs)
-- [⬇️ Download](https://CareerGraph.com/download)
-- [🖌️ Figma Design File (Community Edition)](https://www.figma.com/community/file/1214477970819985778)
-- [⚡ Get PRO Version](https://CareerGraph.com/pricing)
+**Use your preferred IDE**
 
-### Demos
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-- [Free Version](https://free-react-demo.CareerGraph.com/)
-- [Pro Version](https://react-demo.CareerGraph.com)
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-### Other Versions
+Follow these steps:
 
-- [HTML Version](https://github.com/CareerGraph/CareerGraph-free-tailwind-dashboard-template)
-- [Next.js Version](https://github.com/CareerGraph/free-nextjs-admin-dashboard)
-- [Vue.js Version](https://github.com/CareerGraph/vue-tailwind-admin-dashboard)
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-## Installation
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-### Prerequisites
+# Step 3: Install the necessary dependencies.
+npm i
 
-To get started with CareerGraph, ensure you have the following prerequisites installed and set up:
-
-- Node.js 18.x or later (recommended to use Node.js 20.x or later)
-
-### Cloning the Repository
-
-Clone the repository using the following command:
-
-```bash
-git clone https://github.com/CareerGraph/free-react-tailwind-admin-dashboard.git
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
 ```
 
-> Windows Users: place the repository near the root of your drive if you face issues while cloning.
+**Edit a file directly in GitHub**
 
-1. Install dependencies:
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+**Use GitHub Codespaces**
 
-   > Use the `--legacy-peer-deps` flag, if you face issues while installing.
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-2. Start the development server:
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+## What technologies are used for this project?
 
-## Components
+This project is built with:
 
-CareerGraph is a pre-designed starting point for building a web-based dashboard using React.js and Tailwind CSS. The
-template includes:
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-- Sophisticated and accessible sidebar
-- Data visualization components
-- Prebuilt profile management and 404 page
-- Tables and Charts(Line and Bar)
-- Authentication forms and input elements
-- Alerts, Dropdowns, Modals, Buttons and more
-- Can't forget Dark Mode 🕶️
+## How can I deploy this project?
 
-All components are built with React and styled using Tailwind CSS for easy customization.
+Simply open [Lovable](https://lovable.dev/projects/eb16ac5b-dbae-45e2-8579-3d1345d14c48) and click on Share -> Publish.
 
-## Feature Comparison
+## Can I connect a custom domain to my Lovable project?
 
-### Free Version
+Yes, you can!
 
-- 1 Unique Dashboard
-- 30+ dashboard components
-- 50+ UI elements
-- Basic Figma design files
-- Community support
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-### Pro Version
-
-- 5 Unique Dashboards: Analytics, Ecommerce, Marketing, CRM, Stocks (more coming soon)
-- 400+ dashboard components and UI elements
-- Complete Figma design file
-- Email support
-
-To learn more about pro version features and pricing, visit our [pricing page](https://CareerGraph.com/pricing).
-
-## Changelog
-
-### Version 2.0.2 - [March 25, 2025]
-
-- Upgraded to React 19
-- Included overrides for packages to prevent peer dependency errors.
-- Migrated from react-flatpickr to flatpickr package for React 19 support
-
-### Version 2.0.1 - [February 27, 2025]
-
-#### Update Overview
-
-- Upgraded to Tailwind CSS v4 for better performance and efficiency.
-- Updated class usage to match the latest syntax and features.
-- Replaced deprecated class and optimized styles.
-
-#### Next Steps
-
-- Run npm install or yarn install to update dependencies.
-- Check for any style changes or compatibility issues.
-- Refer to the Tailwind CSS v4 [Migration Guide](https://tailwindcss.com/docs/upgrade-guide) on this release. if needed.
-- This update keeps the project up to date with the latest Tailwind improvements. 🚀
-
-### Version 2.0.0 - [February 2025]
-
-A major update with comprehensive redesign and modern React patterns implementation.
-
-#### Major Improvements
-
-- Complete UI redesign with modern React patterns
-- New features: collapsible sidebar, chat, and calendar
-- Improved performance and accessibility
-- Updated data visualization using ApexCharts
-
-#### Key Features
-
-- Redesigned dashboards (Ecommerce, Analytics, Marketing, CRM)
-- Enhanced navigation with React Router integration
-- Advanced tables with sorting and filtering
-- Calendar with drag-and-drop support
-- New UI components and improved existing ones
-
-#### Breaking Changes
-
-- Updated sidebar component API
-- Migrated charts to ApexCharts
-- Revised authentication system
-
-[Read more](https://CareerGraph.com/docs/update-logs/react) on this release.
-
-### Version 1.3.7 - [June 20, 2024]
-
-#### Enhancements
-
-1. Remove Repetition of DefaultLayout in every Pages
-2. Add ClickOutside Component for reduce repeated functionality in Header Message, Notification and User Dropdowns.
-
-### Version 1.3.6 - [Jan 31, 2024]
-
-#### Enhancements
-
-1. Integrate flatpickr in [Date Picker/Form Elements]
-2. Change color after select an option [Select Element/Form Elements].
-3. Make it functional [Multiselect Dropdown/Form Elements].
-4. Make best value editable [Pricing Table One/Pricing Table].
-5. Rearrange Folder structure.
-
-### Version 1.2.0 - [Apr 28, 2023]
-
-- Add Typescript in CareerGraph React.
-
-### Version 1.0.0 - Initial Release - [Mar 13, 2023]
-
-- Initial release of CareerGraph React.
-
-## License
-
-CareerGraph React.js Free Version is released under the MIT License.
-
-## Support
-
-If you find this project helpful, please consider giving it a star on GitHub. Your support helps us continue developing
-and maintaining this template.
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
