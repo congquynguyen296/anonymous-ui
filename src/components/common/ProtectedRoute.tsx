@@ -1,0 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Navigate } from "react-router-dom";
+import { useAuthStore } from "@/store/useAuthStore";
+
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+}
+
+export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { isAuthenticated } = useAuthStore() as any;
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return <>{children}</>;
+}

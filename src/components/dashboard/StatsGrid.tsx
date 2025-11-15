@@ -1,5 +1,5 @@
 import { FileText, BookOpen, Brain, TrendingUp } from 'lucide-react';
-import { StatCard } from '@/components/StatCard';
+import { StatCard } from '@/components/common/StatCard';
 
 interface StatsData {
   totalFiles: number;

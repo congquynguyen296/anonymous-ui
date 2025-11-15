@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,6 +56,7 @@ export default function Login() {
           toast.error(response.message)
         }
       } catch (error: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         toast.error((error as any)?.response.data.message || 'Có lỗi trong quá trình xử lý')
       }
     }
