@@ -6,9 +6,9 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated } = useAppStore();
+  const { data } = useAuthStore();
 
-  if (!isAuthenticated) {
+  if (!data?.accessToken) {
     return <Navigate to="/auth" replace />;
   }
 
