@@ -13,8 +13,6 @@ import {
   Edit,
   Trash2,
   Download,
-  Star,
-  Clock,
   CheckCircle2,
   XCircle,
 } from 'lucide-react';
@@ -22,9 +20,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
+import { SummaryCard } from '@/components/summaries/SummaryCard';
 
 export default function FileDetail() {
   const { subjectId, fileId } = useParams<{ subjectId: string; fileId: string }>();
@@ -85,7 +82,7 @@ export default function FileDetail() {
             Back to {subject?.name || 'Subject'}
           </Button>
 
-          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
+          <Card className="border-0 shadow-xl bg-grad from-white to-gray-50">
             <CardHeader>
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                 <div className="space-y-2 flex-1">
@@ -217,86 +214,24 @@ export default function FileDetail() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-4 lg:grid-cols-2">
+              <div className="space-y-4">
                 {fileSummaries.map((summary) => (
-                  <Card
+                  <SummaryCard
                     key={summary.id}
-                    className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300"
-                  >
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="space-y-1 flex-1">
-                          <CardTitle className="text-lg flex items-center gap-2">
-                            <BookOpen className="h-5 w-5 text-blue-600" />
-                            Summary
-                          </CardTitle>
-                          <CardDescription className="flex items-center gap-2 text-xs">
-                            <Clock className="h-3 w-3" />
-                            {summary.createdAt}
-                          </CardDescription>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleToggleImportant(summary.id)}
-                          className={
-                            summary.isImportant
-                              ? 'text-yellow-600 hover:text-yellow-700'
-                              : 'text-gray-400 hover:text-yellow-600'
-                          }
-                        >
-                          <Star
-                            className="h-4 w-4"
-                            fill={summary.isImportant ? 'currentColor' : 'none'}
-                          />
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <ScrollArea className="h-32">
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          {summary.content}
-                        </p>
-                      </ScrollArea>
-
-                      <Separator />
-
-                      <div>
-                        <h4 className="text-sm font-semibold text-gray-900 mb-2">
-                          Key Concepts
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {summary.keyConcepts.map((concept, idx) => (
-                            <Badge
-                              key={idx}
-                              variant="secondary"
-                              className="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100"
-                            >
-                              {concept}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex gap-2 pt-2">
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Eye className="h-4 w-4 mr-2" />
-                          View
-                        </Button>
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    summary={summary}
+                    onToggleImportant={handleToggleImportant}
+                    onDelete={(id) => {
+                      toast.info('Delete functionality will be implemented');
+                    }}
+                    onViewDetail={(id) => {
+                      toast.info('View detail functionality will be implemented');
+                    }}
+                    onTranslate={async (id, language) => {
+                      toast.success(`Translating to ${language}...`);
+                      console.log(`Translate summary ${id} to ${language}`);
+                    }}
+                    fullWidth={true}
+                  />
                 ))}
               </div>
             )}
@@ -325,7 +260,7 @@ export default function FileDetail() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-4 lg:grid-cols-2">
+              <div className="space-y-4">
                 {fileQuizzes.map((quiz) => (
                   <Card
                     key={quiz.id}
@@ -382,10 +317,8 @@ export default function FileDetail() {
                         </div>
                       </div>
 
-                      <Separator />
-
-                      <div className="space-y-2">
-                        <h4 className="text-sm font-semibold text-gray-900">Sample Question</h4>
+                      <div className="border-t pt-4">
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">Sample Question</h4>
                         <p className="text-sm text-gray-700 line-clamp-2">
                           {quiz.questions[0]?.question}
                         </p>

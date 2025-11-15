@@ -1,48 +1,18 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useAppStore } from '@/store/useAppStore';
+import { toast } from 'sonner';
+import { FileTableRow } from '@/components/files/FileTableRow';
+import { UploadFileDialog } from '@/components/files/UploadFileDialog';
 import {
   FileText,
   Upload,
-  Eye,
-  Trash2,
-  Sparkles,
-  Calendar,
-  FileIcon,
   ArrowLeft,
+  FileIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 export default function SubjectDetail() {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -53,11 +23,6 @@ export default function SubjectDetail() {
   const subjectFiles = files.filter((f) => f.subject === subject?.name);
 
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
-  const [uploadFileName, setUploadFileName] = useState('');
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
 
   if (!subject) {
     return (
@@ -70,50 +35,33 @@ export default function SubjectDetail() {
     );
   }
 
-  const handleFileUpload = () => {
-    if (!uploadFileName.trim()) {
-      toast.error('Please enter a file name');
-      return;
-    }
-
-    if (!uploadFile) {
-      toast.error('Please select a file');
-      return;
-    }
-
+  const handleFileUpload = (fileName: string, file: File) => {
     const newFile = {
       id: `file${Date.now()}`,
-      name: uploadFileName,
+      name: fileName,
       subject: subject.name,
       folder: subject.folders[0] || 'General',
       uploadDate: new Date().toISOString().split('T')[0],
-      size: `${(uploadFile.size / (1024 * 1024)).toFixed(1)} MB`,
+      size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
       summaryCount: 0,
       quizCount: 0,
     };
 
     addFile(newFile);
-    toast.success(`File "${uploadFileName}" uploaded successfully`);
+    toast.success(`File "${fileName}" uploaded successfully`);
     setUploadDialogOpen(false);
-    setUploadFileName('');
-    setUploadFile(null);
   };
 
-  const handleDeleteFile = () => {
-    if (selectedFileId) {
-      const file = files.find((f) => f.id === selectedFileId);
-      deleteFile(selectedFileId);
-      toast.success(`File "${file?.name}" deleted successfully`);
-      setDeleteDialogOpen(false);
-      setSelectedFileId(null);
-    }
+  const handleDeleteFile = (fileId: string) => {
+    const file = files.find((f) => f.id === fileId);
+    deleteFile(fileId);
+    toast.success(`File "${file?.name}" deleted successfully`);
   };
 
-  const handleGenerateSummary = async (fileId: string) => {
+  const handleGenerateSummary = (fileId: string) => {
     const file = files.find((f) => f.id === fileId);
     if (!file) return;
 
-    setIsGeneratingSummary(true);
     toast.info('Generating summary...');
 
     // Simulate API call
@@ -122,25 +70,18 @@ export default function SubjectDetail() {
         id: `sum${Date.now()}`,
         fileId: file.id,
         fileName: file.name,
-        content: `This is an automatically generated summary for ${file.name}. The document covers key concepts and important information relevant to ${subject.name}. Key topics include fundamental principles, practical applications, and theoretical foundations that are essential for understanding this subject matter.`,
-        keyConcepts: [
-          'Core Principles',
-          'Applications',
-          'Key Formulas',
-          'Important Theorems',
-          'Study Guidelines',
-        ],
+        content: `This is an automatically generated summary for ${file.name}. The document covers key concepts and important information relevant to ${subject.name}.`,
+        keyConcepts: ['Core Principles', 'Applications', 'Key Formulas', 'Important Theorems'],
         createdAt: new Date().toISOString().split('T')[0],
         isImportant: false,
       };
 
       addSummary(newSummary);
-      setIsGeneratingSummary(false);
       toast.success('Summary generated successfully!');
     }, 2000);
   };
 
-  const handleViewDetail = (fileId: string) => {
+  const handleViewFile = (fileId: string) => {
     navigate(`/subject/${subjectId}/file/${fileId}`);
   };
 
@@ -243,75 +184,13 @@ export default function SubjectDetail() {
                   </TableHeader>
                   <TableBody>
                     {subjectFiles.map((file) => (
-                      <TableRow key={file.id} className="group hover:bg-gray-50">
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />
-                            <div className="min-w-0">
-                              <div className="font-medium text-gray-900 truncate">
-                                {file.name}
-                              </div>
-                              <div className="text-xs text-gray-500 md:hidden">
-                                {file.uploadDate} • {file.size}
-                              </div>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell text-gray-600">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-gray-400" />
-                            {file.uploadDate}
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell text-gray-600">
-                          {file.size}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="secondary" className="font-semibold">
-                            {file.summaryCount}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant="secondary" className="font-semibold">
-                            {file.quizCount}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleViewDetail(file.id)}
-                              className="hover:bg-blue-50 hover:text-blue-600"
-                            >
-                              <Eye className="h-4 w-4" />
-                              <span className="hidden lg:inline ml-2">View</span>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleGenerateSummary(file.id)}
-                              disabled={isGeneratingSummary}
-                              className="hover:bg-purple-50 hover:text-purple-600"
-                            >
-                              <Sparkles className="h-4 w-4" />
-                              <span className="hidden lg:inline ml-2">Summary</span>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedFileId(file.id);
-                                setDeleteDialogOpen(true);
-                              }}
-                              className="hover:bg-red-50 hover:text-red-600"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              <span className="hidden lg:inline ml-2">Delete</span>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
+                      <FileTableRow
+                        key={file.id}
+                        file={file}
+                        onView={handleViewFile}
+                        onGenerateSummary={handleGenerateSummary}
+                        onDelete={handleDeleteFile}
+                      />
                     ))}
                   </TableBody>
                 </Table>
@@ -321,75 +200,11 @@ export default function SubjectDetail() {
         </Card>
       </div>
 
-      {/* Upload Dialog */}
-      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Upload File</DialogTitle>
-            <DialogDescription>
-              Upload a new file to {subject.name}. Supported formats: PDF, DOCX, TXT
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="fileName">File Name</Label>
-              <Input
-                id="fileName"
-                placeholder="e.g., Chapter 5 - Calculus.pdf"
-                value={uploadFileName}
-                onChange={(e) => setUploadFileName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="file">Select File</Label>
-              <Input
-                id="file"
-                type="file"
-                accept=".pdf,.docx,.txt"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    setUploadFile(file);
-                    if (!uploadFileName) {
-                      setUploadFileName(file.name);
-                    }
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setUploadDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleFileUpload}>Upload</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the file and all
-              associated summaries and quizzes.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setSelectedFileId(null)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteFile}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <UploadFileDialog
+        isOpen={uploadDialogOpen}
+        onClose={() => setUploadDialogOpen(false)}
+        onSubmit={handleFileUpload}
+      />
     </div>
   );
 }
