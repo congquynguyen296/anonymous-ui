@@ -26,7 +26,7 @@ export function FileHeader({ file, subjectColor = '#3B82F6', subjectName, onBack
         Back to {subjectName || 'Subject'}
       </Button>
 
-      <Card className="border-0 shadow-xl bg-grad from-white to-gray-50">
+      <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
         <CardHeader>
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div className="space-y-2 flex-1">
