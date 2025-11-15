@@ -24,6 +24,17 @@ export default function Settings() {
     averageScore: '85%',
   };
 
+  if (!user) {
+    return (
+      <div className="mx-auto max-w-2xl space-y-6">
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">No User Data</h2>
+          <p className="text-gray-600">Please log in to access settings.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>

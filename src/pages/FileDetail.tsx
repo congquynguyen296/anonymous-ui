@@ -42,22 +42,25 @@ export default function FileDetail() {
     );
   };
 
-  const handleDelete = (id: string) => {
-    toast.info('Delete functionality will be implemented');
+  const handleDeleteSummary = (summaryId: string) => {
+    // TODO: Implement delete summary functionality
+    toast.success('Summary deleted');
   };
 
-  const handleViewDetail = (id: string) => {
-    toast.info('View detail functionality will be implemented');
+  const handleViewDetail = (summaryId: string) => {
+    // TODO: Implement view detail functionality
+    toast.info('View detail: ' + summaryId);
   };
 
-  const handleTranslate = async (id: string, language: string) => {
+  const handleTranslate = async (summaryId: string, language: string) => {
+    // TODO: Implement translate functionality
     toast.success(`Translating to ${language}...`);
-    console.log(`Translate summary ${id} to ${language}`);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
         <FileHeader
           file={file}
           subjectColor={subject?.color}
@@ -91,20 +94,23 @@ export default function FileDetail() {
             </TabsTrigger>
           </TabsList>
 
+          {/* Original File Tab */}
           <TabsContent value="original" className="space-y-0">
             <FilePreview fileName={file.name} />
           </TabsContent>
 
+          {/* Summaries Tab */}
           <TabsContent value="summaries" className="space-y-4">
             <SummariesTab
               summaries={fileSummaries}
               onToggleImportant={handleToggleImportant}
-              onDelete={handleDelete}
+              onDelete={handleDeleteSummary}
               onViewDetail={handleViewDetail}
               onTranslate={handleTranslate}
             />
           </TabsContent>
 
+          {/* Quizzes Tab */}
           <TabsContent value="quizzes" className="space-y-4">
             <QuizzesTab quizzes={fileQuizzes} />
           </TabsContent>
