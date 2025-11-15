@@ -11,9 +11,9 @@ import {
   Trash2,
   CheckCircle2,
   XCircle,
+  Loader2,
   RotateCcw,
 } from "lucide-react";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 import fileService, { QuizApiResponse } from "@/services/file.service";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -80,7 +80,7 @@ export function QuizzesTab({ fileId, onCountChange }: QuizzesTabProps) {
       <Card className="border-0 shadow-xl">
         <CardContent className="py-16">
           <div className="flex items-center justify-center">
-            <LoadingSpinner message="Đang tải quiz..." variant="inline" size="md" />
+            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
           </div>
         </CardContent>
       </Card>
@@ -176,7 +176,7 @@ export function QuizzesTab({ fileId, onCountChange }: QuizzesTabProps) {
               <div className="flex justify-end gap-2">
                 {attempted ? (
                   <Button
-                    variant={attempted ? "outline" : "default"}
+                    variant="outline"
                     size="sm"
                     className="w-32 flex items-center justify-center text-purple-600 hover:text-purple-700 hover:bg-purple-50"
                     onClick={() => handleStart(quiz._id)}
@@ -186,7 +186,7 @@ export function QuizzesTab({ fileId, onCountChange }: QuizzesTabProps) {
                   </Button>
                 ) : null}
                 <Button
-                  variant={attempted ? "outline" : "default"}
+                  variant="outline"
                   size="sm"
                   className="w-32 flex items-center justify-center text-teal-600 hover:text-teal-700 hover:bg-teal-50"
                   onClick={() => {

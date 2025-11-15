@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { useEffect, useRef, useState } from 'react';
-import PdfViewer from './PdfViewer';
-import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Download } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { useEffect, useRef, useState } from "react";
+import PdfViewer from "./PdfViewer";
+import { Card, CardContent } from "@/components/ui/card";
+import { FileText, Download } from "lucide-react";
 
 interface FilePreviewProps {
   fileName: string;
@@ -28,16 +28,16 @@ export function FilePreview({ fileName, fileUrl }: FilePreviewProps) {
 
   // If fileUrl exists, prefer rendering PDFs via PdfViewer to avoid embed restrictions
   if (fileUrl) {
-    // const isPdf = fileUrl.split('?')[0].toLowerCase().endsWith('.pdf');
-    // if (isPdf) {
-    //   return (
-    //     <Card className="border-0 shadow-xl overflow-hidden">
-    //       <CardContent>
-    //         <PdfViewer url={fileUrl} />
-    //       </CardContent>
-    //     </Card>
-    //   );
-    // }
+    const isPdf = fileUrl.split("?")[0].toLowerCase().endsWith(".pdf");
+    if (isPdf) {
+      return (
+        <Card className="border-0 shadow-xl overflow-hidden">
+          <CardContent className="p-6">
+            <PdfViewer url={fileUrl} />
+          </CardContent>
+        </Card>
+      );
+    }
 
     return (
       <Card className="border-0 shadow-xl overflow-hidden relative">
@@ -56,11 +56,22 @@ export function FilePreview({ fileName, fileUrl }: FilePreviewProps) {
             {iframeBlocked && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/90 p-6">
                 <p className="text-center text-sm text-gray-700 mb-4">
-                  This file cannot be embedded due to browser/security headers (X-Frame-Options or Content-Security-Policy).
+                  This file cannot be embedded due to browser/security headers
+                  (X-Frame-Options or Content-Security-Policy).
                 </p>
                 <div className="flex gap-2">
-                  <Button onClick={() => window.open(fileUrl, '_blank', 'noopener')}>Open in new tab</Button>
-                  <Button variant="outline" size="sm" onClick={() => { window.location.href = fileUrl; }}>
+                  <Button
+                    onClick={() => window.open(fileUrl, "_blank", "noopener")}
+                  >
+                    Open in new tab
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      window.location.href = fileUrl;
+                    }}
+                  >
                     Download
                   </Button>
                 </div>
@@ -80,10 +91,12 @@ export function FilePreview({ fileName, fileUrl }: FilePreviewProps) {
             <FileText className="h-12 w-12 text-gray-400" />
           </div>
           <div className="text-center space-y-3 max-w-md">
-            <h3 className="text-xl font-semibold text-gray-900">File Preview</h3>
+            <h3 className="text-xl font-semibold text-gray-900">
+              File Preview
+            </h3>
             <p className="text-gray-600">
-              This is a preview of {fileName}. In production, this would display the
-              actual file content.
+              This is a preview of {fileName}. In production, this would display
+              the actual file content.
             </p>
           </div>
           <Button size="lg" variant="outline" className="gap-2">

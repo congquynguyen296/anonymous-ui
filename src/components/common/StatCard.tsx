@@ -7,20 +7,28 @@ interface StatCardProps {
   icon: LucideIcon;
   trend?: string;
   colorClass?: string;
+  bgColorClass?: string;
 }
 
-export function StatCard({ title, value, icon: Icon, trend, colorClass = 'text-primary' }: StatCardProps) {
+export function StatCard({ title, value, icon: Icon, trend, colorClass = 'text-primary', bgColorClass = 'bg-primary/10' }: StatCardProps) {
   return (
-    <Card>
+    <Card className="transition-all hover:border-primary duration-200">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="mt-2 text-3xl font-bold">{value}</p>
-            {trend && <p className="mt-1 text-xs text-muted-foreground">{trend}</p>}
+          <div className="flex-1">
+            <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{title}</p>
+            <p className="mt-3 text-4xl font-bold bg-gradient-to-br from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              {value || 0}
+            </p>
+            {trend && (
+              <p className="mt-2 text-xs font-medium text-muted-foreground flex items-center gap-1">
+                <span className="text-green-600">↗</span>
+                {trend}
+              </p>
+            )}
           </div>
-          <div className={`rounded-lg bg-primary/10 p-3 ${colorClass}`}>
-            <Icon className="h-6 w-6" />
+          <div className={`rounded-xl ${bgColorClass} p-4 ${colorClass} shadow-sm`}>
+            <Icon className="h-8 w-8" strokeWidth={2} />
           </div>
         </div>
       </CardContent>

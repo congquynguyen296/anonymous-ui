@@ -1,7 +1,17 @@
-import { Home, FolderOpen, Upload, Settings, BookOpen, Brain, ChevronRight, LogOut, User } from 'lucide-react';
-import { NavLink } from '@/components/common/NavLink';
-import { useAppStore } from '@/store/useAppStore';
-import { useNavigate } from 'react-router';
+import {
+  Home,
+  FolderOpen,
+  Upload,
+  Settings,
+  BookOpen,
+  Brain,
+  ChevronRight,
+  LogOut,
+  User,
+} from "lucide-react";
+import { NavLink } from "@/components/common/NavLink";
+import { useAppStore } from "@/store/useAppStore";
+import { useNavigate } from "react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -12,23 +22,23 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  SidebarFooter
-} from '@/components/ui/sidebar';
+  SidebarFooter,
+} from "@/components/ui/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { Button } from './ui/button';
-import { toast } from 'sonner';
+} from "@/components/ui/collapsible";
+import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 const menuItems = [
-  { title: 'Dashboard', url: '/', icon: Home },
-  { title: 'Subjects', url: '/subjects', icon: FolderOpen },
-  { title: 'Upload File', url: '/upload', icon: Upload },
-  { title: 'My Summaries', url: '/summaries', icon: BookOpen },
-  { title: 'Quiz History', url: '/quizzes', icon: Brain },
-  { title: 'Settings', url: '/settings', icon: Settings },
+  { title: "Dashboard", url: "/", icon: Home },
+  { title: "Subjects", url: "/subjects", icon: FolderOpen },
+  { title: "Upload File", url: "/upload", icon: Upload },
+  { title: "My Summaries", url: "/summaries", icon: BookOpen },
+  { title: "My Quizzes", url: "/quizzes", icon: Brain },
+  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -40,14 +50,18 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border px-6 py-4">
         <div className="flex items-center gap-2">
-          <Brain className="h-6 w-6 text-sidebar-primary" />
+          <img src="/favicon.ico" alt="Logo" className="h-6 w-6" />
           <div>
-            <h2 className="text-lg font-semibold text-sidebar-foreground">Smart Knowledge</h2>
-            <p className="text-xs text-sidebar-foreground/70">Summarizer & Quiz</p>
+            <h2 className="text-lg font-semibold text-sidebar-foreground">
+              Smart Knowledge
+            </h2>
+            <p className="text-xs text-sidebar-foreground/70">
+              Summarizer & Quiz
+            </p>
           </div>
         </div>
       </SidebarHeader>
-      
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -101,7 +115,7 @@ export function AppSidebar() {
                     {subjects.length > 5 && (
                       <SidebarMenuItem>
                         <SidebarMenuButton
-                          onClick={() => navigate('/subjects')}
+                          onClick={() => navigate("/subjects")}
                           className="text-xs text-sidebar-foreground/60 hover:text-sidebar-foreground cursor-pointer"
                         >
                           View all {subjects.length} subjects →
@@ -118,14 +132,14 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-sidebar-border p-4">
         <div className="flex items-center gap-3 p-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
-            {user?.name?.charAt(0).toUpperCase() || 'U'}
+            {user?.name?.charAt(0).toUpperCase() || "U"}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-sidebar-foreground truncate">
-              {user?.name || 'User'}
+              {user?.name || "User"}
             </p>
             <p className="text-xs text-sidebar-foreground/60 truncate">
-              {user?.email || 'user@example.com'}
+              {user?.email || "user@example.com"}
             </p>
           </div>
           <Button
@@ -133,8 +147,8 @@ export function AppSidebar() {
             size="icon"
             onClick={() => {
               logout();
-              navigate('/login');
-              toast.success('Logged out successfully');
+              navigate("/login");
+              toast.success("Logged out successfully");
             }}
             className="hover:bg-red-50 hover:text-red-600"
             title="Logout"

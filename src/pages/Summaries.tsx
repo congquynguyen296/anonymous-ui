@@ -1,128 +1,234 @@
-import React from "react";
-import fileService from "@/services/file.service";
-import { FileMeta } from "@/type/File";
-import parse from "html-react-parser";
+import React, { useState, useEffect } from "react";
+import fileService, { FileDto } from "@/services/file.service";
 import { toast } from 'sonner';
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { Input } from "@/components/ui/input";
+import { Search, FileText, Calendar } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-interface Summary {
-  id: string;
-  title: string;
-  content: string;
-  language: string;
-}
+export default function Summaries() {
+  const navigate = useNavigate();
+  const [files, setFiles] = useState<FileDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
-interface Props {
-  summary?: Summary;
-  onReGenerate?: (id: string) => void;
-  onTranslate?: (id: string, targetLang: string) => void;
-}
-
-export default function SingleSummary({ summary, onReGenerate, onTranslate }: Props) {
-  const [selectedLang, setSelectedLang] = React.useState("en");
-  const [file, setFile] = React.useState<FileMeta | null>(null);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [contentHtml, setContentHtml] = React.useState<string>("");
-  const [translating, setTranslating] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    const mockId = "69185226e833608ac721712a";
-    setLoading(true);
-    setError(null);
-    fileService
-      .getFileById(mockId)
-      .then((res) => {
-        console.log('RESPONSE', res);
-        if (res.result) {
-          setFile(res.result.data.file);
-          setContentHtml(res.result.data.file.summaryContent || "");
-          // Optional success toast on load
-          // toast.success("Loaded summary content");
-        }
-      })
-      .catch((e) => {
-        setError("Failed to load file");
-        console.error(e);
-        toast.error("Failed to load file summary");
-      })
-      .finally(() => setLoading(false));
+  useEffect(() => {
+    loadFiles();
   }, []);
 
-  console.log('FILE', file)
+  const loadFiles = async () => {
+    try {
+      setLoading(true);
+      const response = await fileService.getAllFiles();
+      if (response.result?.files) {
+        // Filter only files with summaries
+        const filesWithSummaries = response.result.files.filter(
+          file => file.summaryCount && file.summaryCount > 0
+        );
+        setFiles(filesWithSummaries);
+      } else {
+        toast.error('Failed to load files');
+      }
+    } catch (error) {
+      console.error('Error loading files:', error);
+      toast.error('Failed to load files');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter files based on search query
+  const filteredFiles = files.filter(file =>
+    file.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    file.subject?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentFiles = filteredFiles.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) goToPage(currentPage - 1);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) goToPage(currentPage + 1);
+  };
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const handleViewSummary = (fileId: string) => {
+    navigate(`/files/${fileId}`);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <LoadingSpinner message="Loading summaries..." variant="inline" size="lg" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">
-          {loading ? "Loading..." : file?.name || ''}
-        </h1>
-
-        <div className="flex items-center gap-4">
-
-          {/* Re-generate riêng biệt */}
-          <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            onClick={() => onReGenerate?.('1')}
-          >
-            Re-generate
-          </button>
-
-          {/* Khối Translate */}
-          <div className="flex items-center gap-2 bg-gray-300 px-3 py-2 rounded-lg border">
-            <select
-              value={selectedLang}
-              onChange={(e) => setSelectedLang(e.target.value)}
-              className="px-2 py-1 border rounded-md bg-white"
-            >
-              <option value="en">English</option>
-              <option value="vie">Vietnamese</option>
-              <option value="zh">Chinese</option>
-            </select>
-
-            <button
-              className="px-3 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition disabled:opacity-60"
-              disabled={translating || !contentHtml}
-              onClick={async () => {
-                if (!contentHtml) return;
-                try {
-                  setTranslating(true);
-                  const res = await fileService.translateHtml({
-                    content: contentHtml,
-                    targetLang: selectedLang,
-                  });
-                  const nextHtml = res.result || "";
-                  const normalize = (s: string) => s.replace(/\s+/g, " ").trim();
-                  if (normalize(nextHtml) === normalize(contentHtml)) {
-                    toast.info("Same language");
-                  } else {
-                    setContentHtml(nextHtml);
-                    const langLabel = { en: "English", vi: "Vietnamese", zh: "Chinese" } as const;
-                    toast.success(`Translated to ${langLabel[selectedLang as keyof typeof langLabel] || selectedLang}`);
-                  }
-                } catch (e) {
-                  console.error(e);
-                  setError("Failed to translate content");
-                  toast.error("Failed to translate content");
-                } finally {
-                  setTranslating(false);
-                }
-              }}
-            >
-              {translating ? 'Translating...' : 'Translate'}
-            </button>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold">My Summaries</h1>
+          <p className="text-muted-foreground">View and manage your file summaries</p>
         </div>
-
+        {files.length > 0 && (
+          <div className="text-sm text-muted-foreground">
+            {filteredFiles.length} {filteredFiles.length === 1 ? 'summary' : 'summaries'}
+            {searchQuery && ` (filtered from ${files.length})`}
+          </div>
+        )}
       </div>
 
-      {/* CONTENT */}
-      <div className="prose prose-sm max-w-none">
-        {loading && <LoadingSpinner message="Đang tải nội dung..." variant="inline" size="md" />}
-        {error && !loading && <p className="text-red-600">{error}</p>}
-        {!loading && !error && parse(contentHtml || '')}
+      {/* Search Bar */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search by file name or subject..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
+        />
       </div>
 
+      {/* Files Grid */}
+      {files.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16 space-y-4">
+            <div className="w-24 h-24 rounded-2xl bg-purple-100 flex items-center justify-center">
+              <FileText className="h-12 w-12 text-purple-600" />
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-semibold text-gray-900">
+                No summaries yet
+              </h3>
+              <p className="text-gray-600 max-w-md">
+                Upload files with summary generation enabled to see them here
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : filteredFiles.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <p className="text-gray-600">No files found matching "{searchQuery}"</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {currentFiles.map((file) => (
+              <Card
+                key={file.id}
+                className="transition-all hover:shadow-lg hover:border-primary cursor-pointer"
+                onClick={() => handleViewSummary(file.id)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                        <FileText className="h-6 w-6 text-purple-600" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate mb-1">
+                        {file.name}
+                      </h3>
+                      {file.subject && (
+                        <p className="text-sm text-purple-600 font-medium mb-2">
+                          {file.subject}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                        {file.uploadDate && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(file.uploadDate).toLocaleDateString()}
+                          </span>
+                        )}
+                        {file.size && <span>{file.size}</span>}
+                      </div>
+                      <div className="mt-3 flex items-center gap-2 text-sm">
+                        <span className="text-purple-600 font-medium">
+                          {file.summaryCount} {file.summaryCount === 1 ? 'summary' : 'summaries'}
+                        </span>
+                        {file.quizCount !== undefined && file.quizCount > 0 && (
+                          <>
+                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-600">
+                              {file.quizCount} {file.quizCount === 1 ? 'quiz' : 'quizzes'}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToPrevPage}
+                disabled={currentPage === 1}
+                className="gap-1"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => goToPage(page)}
+                    className="min-w-[40px]"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+                className="gap-1"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -5,26 +5,40 @@ import { CreateSubjectDialog } from '@/components/subjects/CreateSubjectDialog';
 import { useEffect, useState } from 'react';
 import subjectService from '@/services/subject.service';
 import { SubjectStatsDTO } from '@/services/subject.service';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 export default function Subjects() {
   const { files, addSubject } = useAppStore();
   const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const fetchSubjects = async () => {
-    const data = await subjectService.getAllSubjectByUser()
-    if (data && data.code && data.code === 200)
-      console.log(data)
-    setSubjects(data.result)
-  }
+    try {
+      setLoading(true);
+      const data = await subjectService.getAllSubjectByUser();
+      if (data && data.code && data.code === 200) {
+        console.log(data);
+        setSubjects(data.result);
+      }
+    } catch (error) {
+      console.error('Error loading subjects:', error);
+      toast.error('Failed to load subjects');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchSubjects()
-  }, [])
+    fetchSubjects();
+  }, []);
+
   const handleCreateSubject = async (name: string) => {
     const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444'];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    const data = await subjectService.createSubject({ name, color: randomColor })
+    const data = await subjectService.createSubject({ name, color: randomColor });
     if (data && data.code && data.code === 200) {
       toast.success('Subject created successfully');
-      fetchSubjects()
+      fetchSubjects();
     }
   };
 
@@ -35,6 +49,14 @@ export default function Subjects() {
   const handleDelete = (id: string) => {
     toast.info('Delete functionality coming soon');
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <LoadingSpinner message="Loading subjects..." variant="inline" size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

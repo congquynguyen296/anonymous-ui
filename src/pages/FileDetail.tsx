@@ -109,7 +109,9 @@ export default function FileDetail() {
   if (!file) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <LoadingSpinner message="Đang tải file..." variant="inline" size="lg" />
+        {isLoading && (
+          <LoadingSpinner message="Loading file..." variant="inline" size="lg" />
+        )}
       </div>
     );
   }
@@ -197,13 +199,7 @@ export default function FileDetail() {
 
           {/* Summaries Tab */}
           <TabsContent value="summaries" className="space-y-4">
-            <SummariesTab
-              summaries={mappedSummaries}
-              onToggleImportant={handleToggleImportant}
-              onDelete={handleDeleteSummary}
-              onViewDetail={handleViewDetail}
-              onTranslate={handleTranslate}
-            />
+            {fileId && <SummariesTab fileId={fileId} />}
           </TabsContent>
 
           {/* Quizzes Tab */}
