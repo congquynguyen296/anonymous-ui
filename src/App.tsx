@@ -33,30 +33,30 @@ const App = () => (
             path="/*"
             element={
               <ProtectedRoute>
-              <SidebarProvider>
-                <div className="flex min-h-screen w-full">
-                  <AppSidebar />
-                  <main className="flex-1 overflow-auto bg-background p-8">
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/subjects" element={<Subjects />} />
-                      <Route
-                        path="/subject/:subjectId"
-                        element={<SubjectDetail />}
-                      />
-                      <Route
-                        path="/subject/:subjectId/file/:fileId"
-                        element={<FileDetail />}
-                      />
-                      <Route path="/upload" element={<Upload />} />
-                      <Route path="/summaries" element={<Summaries />} />
-                      <Route path="/quizzes" element={<Quizzes />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                </div>
-              </SidebarProvider>
+                <SidebarProvider>
+                  <div className="flex min-h-screen w-full">
+                    <AppSidebar />
+                    <main className="flex-1 overflow-auto bg-background p-8">
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/subjects" element={<Subjects />} />
+                        <Route
+                          path="/subject/:subjectId"
+                          element={<SubjectDetail />}
+                        />
+                        <Route
+                          path="/subject/:subjectId/file/:fileId"
+                          element={<FileDetail />}
+                        />
+                        <Route path="/upload" element={<Upload />} />
+                        <Route path="/summaries" element={<Summaries />} />
+                        <Route path="/quizzes" element={<Quizzes />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                  </div>
+                </SidebarProvider>
               </ProtectedRoute>
             }
           />

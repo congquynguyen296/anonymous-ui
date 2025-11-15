@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -7,9 +6,9 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated } = useAuthStore() as any;
+  const { data } = useAuthStore();
 
-  if (!isAuthenticated) {
+  if (!data?.accessToken) {
     return <Navigate to="/auth" replace />;
   }
 
