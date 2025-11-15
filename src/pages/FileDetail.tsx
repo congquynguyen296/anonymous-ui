@@ -197,13 +197,7 @@ export default function FileDetail() {
 
           {/* Summaries Tab */}
           <TabsContent value="summaries" className="space-y-4">
-            <SummariesTab
-              summaries={mappedSummaries}
-              onToggleImportant={handleToggleImportant}
-              onDelete={handleDeleteSummary}
-              onViewDetail={handleViewDetail}
-              onTranslate={handleTranslate}
-            />
+            {fileId && <SummariesTab fileId={fileId} />}
           </TabsContent>
 
           {/* Quizzes Tab */}

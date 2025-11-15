@@ -33,7 +33,6 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
     fileService
       .getFileById(mockId)
       .then((res) => {
-        console.log('RESPONSE', res);
         if (res.result) {
           setFile(res.result.data.file);
           setContentHtml(res.result.data.file.summaryContent || "");
@@ -49,7 +48,6 @@ export default function SingleSummary({ summary, onReGenerate, onTranslate }: Pr
       .finally(() => setLoading(false));
   }, []);
 
-  console.log('FILE', file)
   return (
     <div className="space-y-6">
       {/* Header */}
