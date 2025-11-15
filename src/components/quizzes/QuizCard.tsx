@@ -1,95 +1,109 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Brain, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-
-export interface QuizData {
-  id: string;
-  fileId: string;
-  fileName: string;
-  subject: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  questions: QuizQuestion[];
-  createdAt: string;
-  score?: number;
-  completed: boolean;
-}
-
-export interface QuizQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  userAnswer?: number;
-}
+import { useNavigate } from 'react-router-dom';
+import { QuizApiResponse } from '@/services/file.service';
 
 interface QuizCardProps {
-  quiz: QuizData;
-  onTakeQuiz: (id: string) => void;
+  quiz: QuizApiResponse;
 }
 
 const getDifficultyColor = (difficulty: string) => {
-  switch (difficulty) {
-    case 'Easy':
-      return 'bg-success/20 text-success';
-    case 'Medium':
-      return 'bg-chart-4/20 text-chart-4';
-    case 'Hard':
-      return 'bg-destructive/20 text-destructive';
+  switch (difficulty.toLowerCase()) {
+    case 'ez':
+    case 'easy':
+      return 'bg-green-100 text-green-800 border-green-200';
+    case 'md':
+    case 'medium':
+      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    case 'hard':
+      return 'bg-red-100 text-red-800 border-red-200';
     default:
-      return 'bg-muted';
+      return 'bg-gray-100 text-gray-800 border-gray-200';
   }
 };
 
-export function QuizCard({ quiz, onTakeQuiz }: QuizCardProps) {
+const getDifficultyLabel = (level: string) => {
+  switch (level.toLowerCase()) {
+    case 'ez':
+      return 'Easy';
+    case 'md':
+      return 'Medium';
+    case 'hard':
+      return 'Hard';
+    default:
+      return level;
+  }
+};
+
+export function QuizCard({ quiz }: QuizCardProps) {
+  const navigate = useNavigate();
+  const hasAttempted = quiz.highestScore !== -1;
+
+  const handleQuizAction = () => {
+    if (hasAttempted) {
+      // Navigate to review mode
+      navigate(`/quiz/${quiz._id}/questions?review=true`);
+    } else {
+      // Navigate to start quiz
+      navigate(`/quiz/${quiz._id}/questions`);
+    }
+  };
+
   return (
     <Card className="transition-shadow hover:shadow-lg">
       <CardHeader>
         <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-lg">{quiz.fileName}</CardTitle>
-            <p className="mt-1 text-sm text-muted-foreground">{quiz.subject}</p>
+          <div className="flex items-start gap-3 flex-1">
+            <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0 mt-1">
+              <Brain className="h-5 w-5 text-purple-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg line-clamp-2">{quiz.name}</CardTitle>
+              {quiz.content && (
+                <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                  {quiz.content}
+                </p>
+              )}
+            </div>
           </div>
-          <Badge className={getDifficultyColor(quiz.difficulty)}>
-            {quiz.difficulty}
-          </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Clock className="h-4 w-4" />
-            <span>
-              {formatDistanceToNow(new Date(quiz.createdAt), {
-                addSuffix: true,
-              })}
-            </span>
-          </div>
-          <span className="text-muted-foreground">
-            {quiz.questions.length} questions
+        <div className="flex flex-wrap gap-2">
+          <Badge className={getDifficultyColor(quiz.level)}>
+            {getDifficultyLabel(quiz.level)}
+          </Badge>
+          {hasAttempted && (
+            <Badge
+              className={
+                quiz.highestScore >= 70
+                  ? 'bg-green-100 text-green-800 border-green-200'
+                  : 'bg-orange-100 text-orange-800 border-orange-200'
+              }
+            >
+              Best Score: {quiz.highestScore}%
+            </Badge>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Clock className="h-4 w-4" />
+          <span>
+            Created {formatDistanceToNow(new Date(quiz.createdAt), {
+              addSuffix: true,
+            })}
           </span>
         </div>
 
-        {quiz.completed && quiz.score !== undefined ? (
-          <div className="rounded-lg bg-muted p-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Score</span>
-              <span className="text-lg font-bold text-success">
-                {quiz.score}%
-              </span>
-            </div>
-          </div>
-        ) : (
-          <Badge variant="outline">Not completed</Badge>
-        )}
-
         <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => onTakeQuiz(quiz.id)}
+          variant={hasAttempted ? 'outline' : 'default'}
+          className={`w-full ${!hasAttempted ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+          onClick={handleQuizAction}
         >
-          {quiz.completed ? 'Review Quiz' : 'Take Quiz'}
+          {hasAttempted ? 'Review Quiz' : 'Start Quiz'}
         </Button>
       </CardContent>
     </Card>

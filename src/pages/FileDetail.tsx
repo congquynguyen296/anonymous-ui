@@ -14,14 +14,14 @@ import { QuizzesTab } from '@/components/files/QuizzesTab';
 export default function FileDetail() {
   const { subjectId, fileId } = useParams<{ subjectId: string; fileId: string }>();
   const navigate = useNavigate();
-  const { files, summaries, quizzes, subjects, toggleImportant } = useAppStore();
+  const { files, summaries, subjects, toggleImportant } = useAppStore();
 
   const file = files.find((f) => f.id === fileId);
   const subject = subjects.find((s) => s.id === subjectId);
   const fileSummaries = summaries.filter((s) => s.fileId === fileId);
-  const fileQuizzes = quizzes.filter((q) => q.fileId === fileId);
 
   const [activeTab, setActiveTab] = useState('original');
+  const [quizzesCount, setQuizzesCount] = useState<number | null>(null);
 
   if (!file) {
     return (
@@ -88,9 +88,11 @@ export default function FileDetail() {
               <Brain className="h-4 w-4" />
               <span className="hidden sm:inline">Quizzes</span>
               <span className="sm:hidden">Quiz</span>
-              <Badge variant="secondary" className="ml-1">
-                {fileQuizzes.length}
-              </Badge>
+              {quizzesCount !== null && (
+                <Badge variant="secondary" className="ml-1">
+                  {quizzesCount}
+                </Badge>
+              )}
             </TabsTrigger>
           </TabsList>
 
@@ -112,7 +114,7 @@ export default function FileDetail() {
 
           {/* Quizzes Tab */}
           <TabsContent value="quizzes" className="space-y-4">
-            <QuizzesTab quizzes={fileQuizzes} />
+            {fileId && <QuizzesTab fileId={fileId} onCountChange={setQuizzesCount} />}
           </TabsContent>
         </Tabs>
       </div>
