@@ -1,4 +1,4 @@
-import { Home, FolderOpen, Upload, Settings, BookOpen, Brain, ChevronRight } from 'lucide-react';
+import { Home, FolderOpen, Upload, Settings, BookOpen, Brain, ChevronRight, LogOut, User } from 'lucide-react';
 import { NavLink } from '@/components/common/NavLink';
 import { useAppStore } from '@/store/useAppStore';
 import { useNavigate } from 'react-router';
@@ -20,7 +20,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { Button } from './ui/button';
-import { useAuthStore } from '@/store/useAuthStore';
+import { toast } from 'sonner';
 
 const menuItems = [
   { title: 'Dashboard', url: '/', icon: Home },
@@ -32,9 +32,9 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { subjects } = useAppStore();
+  const { subjects, user } = useAppStore();
   const navigate = useNavigate();
-  const { data, setData } = useAuthStore()
+  const logout = useAppStore((state) => state.logout);
 
   return (
     <Sidebar>
@@ -115,12 +115,33 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border px-6 py-4">
-        <Button size="sm" onClick={() => {
-          setData(null);
-        }}>
-          Log out
-        </Button>
+      <SidebarFooter className="border-t border-sidebar-border p-4">
+        <div className="flex items-center gap-3 p-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
+            {user?.name?.charAt(0).toUpperCase() || 'U'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-sidebar-foreground truncate">
+              {user?.name || 'User'}
+            </p>
+            <p className="text-xs text-sidebar-foreground/60 truncate">
+              {user?.email || 'user@example.com'}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              logout();
+              navigate('/login');
+              toast.success('Logged out successfully');
+            }}
+            className="hover:bg-red-50 hover:text-red-600"
+            title="Logout"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
