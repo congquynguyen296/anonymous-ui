@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Clock } from 'lucide-react';
+import { Brain, Clock, RotateCcw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { QuizApiResponse } from '@/services/file.service';
@@ -42,14 +42,12 @@ export function QuizCard({ quiz }: QuizCardProps) {
   const navigate = useNavigate();
   const hasAttempted = quiz.highestScore !== -1;
 
-  const handleQuizAction = () => {
-    if (hasAttempted) {
-      // Navigate to review mode
-      navigate(`/quiz/${quiz._id}/questions?review=true`);
-    } else {
-      // Navigate to start quiz
-      navigate(`/quiz/${quiz._id}/questions`);
-    }
+  const handleReview = () => {
+    navigate(`/quiz/${quiz._id}/questions?review=true`);
+  };
+
+  const handleStart = () => {
+    navigate(`/quiz/${quiz._id}/questions`);
   };
 
   return (
@@ -98,13 +96,33 @@ export function QuizCard({ quiz }: QuizCardProps) {
           </span>
         </div>
 
-        <Button
-          variant={hasAttempted ? 'outline' : 'default'}
-          className={`w-full ${!hasAttempted ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
-          onClick={handleQuizAction}
-        >
-          {hasAttempted ? 'Review Quiz' : 'Start Quiz'}
-        </Button>
+        {hasAttempted ? (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={handleReview}
+            >
+              Review Quiz
+            </Button>
+            <Button
+              variant="default"
+              className="flex-1 bg-purple-600 hover:bg-purple-700"
+              onClick={handleStart}
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Restart
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="default"
+            className="w-full bg-purple-600 hover:bg-purple-700"
+            onClick={handleStart}
+          >
+            Start Quiz
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

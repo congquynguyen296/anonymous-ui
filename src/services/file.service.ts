@@ -1,4 +1,7 @@
 import axiosInstance from "@/lib/axios.lib";
+import { FileMeta } from "@/type/File";
+import { TranslateHtmlRequest, TranslateHtmlResponse } from "../type/Translate";
+import { ApiResponse } from "../type/ApiResponse";
 
 export interface QuizApiResponse {
   _id: string;
@@ -90,11 +93,15 @@ class FileService {
     return response.data;
   }
 
-  async getQuizQuestions(quizId: string, isReview: boolean = false): Promise<QuestionsListResponse> {
+  async getQuizQuestions(
+    quizId: string,
+    isReview: boolean = false
+  ): Promise<QuestionsListResponse> {
     const url = isReview
       ? `/file/quizzes/${quizId}/questions?review=true`
       : `/file/quizzes/${quizId}/questions`;
-    const response = await axiosInstance.axiosInstance.get<QuestionsListResponse>(url);
+    const response =
+      await axiosInstance.axiosInstance.get<QuestionsListResponse>(url);
     return response.data;
   }
 
@@ -122,6 +129,23 @@ class FileService {
       requestBody
     );
     return response.data;
+  }
+
+  async getFileById(fileId: string): Promise<ApiResponse<FileMeta>> {
+    const res = await axiosInstance.axiosInstance.get<ApiResponse<FileMeta>>(
+      `/files/files/${fileId}`
+    );
+    return res.data;
+  }
+
+  async translateHtml(
+    payload: TranslateHtmlRequest
+  ): Promise<TranslateHtmlResponse> {
+    const res = await axiosInstance.axiosInstance.post<TranslateHtmlResponse>(
+      `/generate-ai/translate`,
+      payload
+    );
+    return res.data;
   }
 }
 

@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
+  RotateCcw,
 } from "lucide-react";
 import fileService, { QuizApiResponse } from "@/services/file.service";
 import { toast } from "sonner";
@@ -112,6 +113,10 @@ export function QuizzesTab({ fileId, onCountChange }: QuizzesTabProps) {
 
   const hasAttempted = (quiz: QuizApiResponse) => quiz.highestScore !== -1;
 
+  const handleStart = (quizId) => {
+    navigate(`/quiz/${quizId}/questions`);
+  };
+
   return (
     <div className="space-y-4">
       {quizzes.map((quiz) => {
@@ -169,10 +174,21 @@ export function QuizzesTab({ fileId, onCountChange }: QuizzesTabProps) {
             {/* Buttons */}
             <CardContent>
               <div className="flex justify-end gap-2">
+                {attempted ? (
+                  <Button
+                    variant={attempted ? "outline" : "default"}
+                    size="sm"
+                    className="w-32 flex items-center justify-center text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                    onClick={() => handleStart(quiz._id)}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Restart
+                  </Button>
+                ) : null}
                 <Button
                   variant={attempted ? "outline" : "default"}
                   size="sm"
-                  className="w-32 flex items-center justify-center"
+                  className="w-32 flex items-center justify-center text-teal-600 hover:text-teal-700 hover:bg-teal-50"
                   onClick={() => {
                     const url = attempted
                       ? `/quiz/${quiz._id}/questions?review=true`

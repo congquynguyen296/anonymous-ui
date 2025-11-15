@@ -13,9 +13,10 @@ import { Plus } from 'lucide-react';
 
 interface CreateSubjectDialogProps {
   onSubmit: (name: string) => void;
+  update?: boolean ,
 }
 
-export function CreateSubjectDialog({ onSubmit }: CreateSubjectDialogProps) {
+export function CreateSubjectDialog({ onSubmit, update=false }: CreateSubjectDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [subjectName, setSubjectName] = useState('');
 
@@ -32,12 +33,12 @@ export function CreateSubjectDialog({ onSubmit }: CreateSubjectDialogProps) {
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          New Subject
+          {update ? (<div>Update Subject</div>):(<div>New Subject</div>)}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Subject</DialogTitle>
+          <DialogTitle>{update ? (<div>Update Subject</div>):(<div>Create New Subject</div>)}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
@@ -50,7 +51,7 @@ export function CreateSubjectDialog({ onSubmit }: CreateSubjectDialogProps) {
             />
           </div>
           <Button onClick={handleSubmit} className="w-full">
-            Create Subject
+            {update ? (<div>Update Subject</div>):(<div>Create Subject</div>)}
           </Button>
         </div>
       </DialogContent>

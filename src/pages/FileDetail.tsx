@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useAppStore } from '@/store/useAppStore';
-import { FileText, BookOpen, Brain } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { FileText, BookOpen, Brain, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -26,10 +25,7 @@ export default function FileDetail() {
   if (!file) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-center space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900">File Not Found</h2>
-          <Button onClick={() => navigate(`/subject/${subjectId}`)}>Back to Subject</Button>
-        </div>
+        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
       </div>
     );
   }
