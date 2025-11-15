@@ -267,6 +267,20 @@ class FileService {
     return res.data;
   }
 
+  async searchFiles(query: string): Promise<ApiResponse<{ files: FileDto[] }>> {
+    const response = await axiosInstance.axiosInstance.get<ApiResponse<{ files: FileDto[] }>>(
+      `/files/search?query=${encodeURIComponent(query)}`
+    );
+    return response.data;
+  }
+
+  async getAllFiles(): Promise<ApiResponse<{ files: FileDto[] }>> {
+    const response = await axiosInstance.axiosInstance.get<ApiResponse<{ files: FileDto[] }>>(
+      `/files`
+    );
+    return response.data;
+  }
+
 }
 
 export default new FileService();
