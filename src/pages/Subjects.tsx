@@ -5,15 +5,17 @@ import { CreateSubjectDialog } from '@/components/subjects/CreateSubjectDialog';
 import { useEffect, useState } from 'react';
 import subjectService from '@/services/subject.service';
 import { SubjectStatsDTO } from '@/services/subject.service';
+import { useSubjectStore } from '@/store/subjectStore';
 
 export default function Subjects() {
   const { files, addSubject } = useAppStore();
-  const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
+  // const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
+  const subjects: SubjectStatsDTO[] | null = useSubjectStore((s) => s.subjects)
   const fetchSubjects = async () => {
     const data = await subjectService.getAllSubjectByUser()
     if (data && data.code && data.code === 200)
       console.log(data)
-    setSubjects(data.result)
+      useSubjectStore.getState().setSubjects(data.result)
   }
   useEffect(() => {
     fetchSubjects()

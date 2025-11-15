@@ -70,6 +70,10 @@ class SubjectService {
     const response = await axiosInstance.axiosInstance.put<ApiResponse<SubjectStatsDTO>>(`/subjects`, data)
     return response.data;
   }
+  async deleteSubject(subjectId: string): Promise<ApiResponse<SubjectStatsDTO>> {
+    const response = await axiosInstance.axiosInstance.delete<ApiResponse<SubjectStatsDTO>>(`/subject/${encodeURIComponent(subjectId)}`)
+    return response.data;
+  }
 }
 
 export default new SubjectService();

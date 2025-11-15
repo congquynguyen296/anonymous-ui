@@ -2,11 +2,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FolderOpen, Edit, Trash2, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 import { EditSubjectDialog } from './EditSubjectDialog';
-import subjectService from '@/services/subject.service';
+import subjectService, { SubjectStatsDTO } from '@/services/subject.service';
 import { toast } from 'sonner';
+import { useSubjectStore } from '@/store/subjectStore';
+
+// 👉 nhớ import AlertDialog
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export interface Subject {
   id: string;
@@ -24,24 +37,27 @@ interface SubjectCardProps {
   subject: Subject;
   stats: SubjectStats;
   onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: (id: string) => void; // nếu muốn vẫn giữ callback ngoài
 }
+
 export interface UpdateSubjectInput {
-  newName: string
-  id: string
+  newName: string;
+  id: string;
 }
+
 export function SubjectCard({ subject, stats, onEdit, onDelete }: SubjectCardProps) {
+  const subjects: SubjectStatsDTO[] | null = useSubjectStore((s) => s.subjects);
   const [sub, setSub] = useState<Subject>(subject);
   const navigate = useNavigate();
   const [showEdit, setShowEdit] = useState(false);
+
   const handleEdit = async (newName: string) => {
     try {
       const data = await subjectService.updateSubject({
         id: sub.id,
-        name: newName, // hoặc newName: newName nếu BE dùng field newName
+        name: newName,
       });
       if (data && data.code === 200) {
-        console.log(data)
         toast.success('Subject updated successfully');
         const updated = data.result;
 
@@ -56,6 +72,32 @@ export function SubjectCard({ subject, stats, onEdit, onDelete }: SubjectCardPro
     } catch (error) {
       console.error(error);
       toast.error('Failed to update subject');
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const data = await subjectService.deleteSubject(sub.id);
+      if (data && data.code === 200) {
+        // reload list subject vào store
+        const fetchSubjects = async () => {
+          const res = await subjectService.getAllSubjectByUser();
+          if (res && res.code === 200) {
+            useSubjectStore.getState().setSubjects(res.result);
+          }
+        };
+        fetchSubjects();
+
+        // nếu cha truyền onDelete thì gọi luôn
+        onDelete?.(sub.id);
+
+        toast.success('Subject deleted successfully');
+      } else {
+        toast.error(data?.message || 'Failed to delete subject');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete subject');
     }
   };
 
@@ -76,6 +118,7 @@ export function SubjectCard({ subject, stats, onEdit, onDelete }: SubjectCardPro
               </div>
               <CardTitle className="text-xl">{sub.name}</CardTitle>
             </div>
+
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {onEdit && (
                 <Button
@@ -91,22 +134,48 @@ export function SubjectCard({ subject, stats, onEdit, onDelete }: SubjectCardPro
                   <Edit className="h-4 w-4" />
                 </Button>
               )}
-              {onDelete && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(sub.id);
-                  }}
+
+              {/* 🗑 Nút xoá có popup confirm */}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent
+                  onClick={(e) => e.stopPropagation()} // tránh click overlay bị propagate lên Card
                 >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Delete subject "{sub.name}"?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. All files, quizzes, and related data
+                      associated with this subject may be affected.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete();
+                      }}
+                    >
+                      Confirm deletion
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </CardHeader>
+
         <CardContent>
           <div className="space-y-3">
             <div className="grid grid-cols-3 gap-2 text-center">
@@ -123,7 +192,7 @@ export function SubjectCard({ subject, stats, onEdit, onDelete }: SubjectCardPro
                 <p className="text-xs text-muted-foreground">Quizzes</p>
               </div>
             </div>
-  
+
             <Button
               variant="outline"
               className="w-full mt-2 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
@@ -138,15 +207,15 @@ export function SubjectCard({ subject, stats, onEdit, onDelete }: SubjectCardPro
           </div>
         </CardContent>
       </Card>
-  
+
       {onEdit && (
-          <EditSubjectDialog
-            isOpen={showEdit}
-            onClose={() => setShowEdit(false)}
-            defaultName={sub.name}
-            onSubmit={handleEdit}
-          />
-        )}
+        <EditSubjectDialog
+          isOpen={showEdit}
+          onClose={() => setShowEdit(false)}
+          defaultName={sub.name}
+          onSubmit={handleEdit}
+        />
+      )}
     </>
   );
 }

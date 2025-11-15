@@ -25,6 +25,7 @@ import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
 import userService from '@/services/user.service';
 import subjectService, { SubjectStatsDTO } from '@/services/subject.service';
+import { useSubjectStore } from '@/store/subjectStore';
 
 const menuItems = [
   { title: 'Dashboard', url: '/', icon: Home },
@@ -41,7 +42,7 @@ export function AppSidebar() {
   const { data, setData } = useAuthStore();
   const logout = () => setData(null)
 
-  const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
+  // const [subjects, setSubjects] = useState<SubjectStatsDTO[]>([]);
   // useEffect(() => {
   //   const fetchUserData = async () => {
   //     try {
@@ -56,14 +57,15 @@ export function AppSidebar() {
     
   // }, [data]);
 
-  const fetchSubjects = async () => {
-        const data = await subjectService.getAllSubjectByUser()
-        if (data && data.code && data.code === 200)
-          setSubjects(data.result)
-      }
-    useEffect(() => {
-      fetchSubjects()
-    },[])
+  // const fetchSubjects = async () => {
+  //       const data = await subjectService.getAllSubjectByUser()
+  //       if (data && data.code && data.code === 200)
+  //         setSubjects(data.result)
+  //     }
+  //   useEffect(() => {
+  //     fetchSubjects()
+  //   },[])
+  const subjects: SubjectStatsDTO[] | null = useSubjectStore((s) => s.subjects)
   return (
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border px-6 py-4">
