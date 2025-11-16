@@ -1,4 +1,4 @@
-import { Home, FolderOpen, Upload, Settings, BookOpen, Brain, ChevronRight, LogOut, User } from 'lucide-react';
+import { Home, FolderOpen, BookOpen, Brain, ChevronRight, LogOut, User } from 'lucide-react';
 import { NavLink } from '@/components/common/NavLink';
 import { useAppStore } from '@/store/useAppStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -30,10 +30,8 @@ import { useSubjectStore } from '@/store/subjectStore';
 const menuItems = [
   { title: 'Dashboard', url: '/', icon: Home },
   { title: 'Subjects', url: '/subjects', icon: FolderOpen },
-  { title: 'Upload File', url: '/upload', icon: Upload },
   { title: 'My Summaries', url: '/summaries', icon: BookOpen },
   { title: 'Quiz History', url: '/quizzes', icon: Brain },
-  { title: 'Settings', url: '/settings', icon: Settings },
 ];
 
 export function AppSidebar() {

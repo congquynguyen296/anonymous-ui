@@ -1,27 +1,92 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Brain, Sparkles, Eye, Edit, Trash2, CheckCircle2, XCircle } from 'lucide-react';
-import { Quiz } from '@/store/useAppStore';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Brain,
+  Sparkles,
+  Eye,
+  Edit,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  RotateCcw,
+} from "lucide-react";
+import fileService, { QuizApiResponse } from "@/services/file.service";
+import { toast } from "sonner";
+import { format } from "date-fns";
 
 interface QuizzesTabProps {
-  quizzes: Quiz[];
+  fileId: string;
+  onCountChange?: (count: number) => void;
 }
 
-const getDifficultyColor = (difficulty: string) => {
-  switch (difficulty) {
-    case 'Easy':
-      return 'bg-green-100 text-green-800 border-green-200';
-    case 'Medium':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'Hard':
-      return 'bg-red-100 text-red-800 border-red-200';
+const getDifficultyColor = (level: string) => {
+  switch (level.toLowerCase()) {
+    case "ez":
+    case "easy":
+      return "bg-green-100 text-green-800 border-green-200";
+    case "medium":
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    case "hard":
+      return "bg-red-100 text-red-800 border-red-200";
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
 
-export function QuizzesTab({ quizzes }: QuizzesTabProps) {
+const getDifficultyLabel = (level: string) => {
+  switch (level.toLowerCase()) {
+    case "ez":
+      return "Easy";
+    case "medium":
+      return "Medium";
+    case "hard":
+      return "Hard";
+    default:
+      return level;
+  }
+};
+
+export function QuizzesTab({ fileId, onCountChange }: QuizzesTabProps) {
+  const navigate = useNavigate();
+  const [quizzes, setQuizzes] = useState<QuizApiResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadQuizzes = async () => {
+      try {
+        setLoading(true);
+        const response = await fileService.getFileQuizzes(fileId);
+        if (response.success) {
+          setQuizzes(response.data);
+          onCountChange?.(response.count);
+        }
+      } catch (error) {
+        console.error("Error loading quizzes:", error);
+        toast.error("Failed to load quizzes");
+        onCountChange?.(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadQuizzes();
+  }, [fileId, onCountChange]);
+  if (loading) {
+    return (
+      <Card className="border-0 shadow-xl">
+        <CardContent className="py-16">
+          <div className="flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (quizzes.length === 0) {
     return (
       <Card className="border-0 shadow-xl">
@@ -46,93 +111,107 @@ export function QuizzesTab({ quizzes }: QuizzesTabProps) {
     );
   }
 
+  const hasAttempted = (quiz: QuizApiResponse) => quiz.highestScore !== -1;
+
+  const handleStart = (quizId) => {
+    navigate(`/quiz/${quizId}/questions`);
+  };
+
   return (
     <div className="space-y-4">
-      {quizzes.map((quiz) => (
-        <Card
-          key={quiz.id}
-          className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300"
-        >
-          <CardHeader>
-            <div className="flex items-start justify-between gap-2">
-              <div className="space-y-2 flex-1">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-purple-600" />
-                  Quiz
-                </CardTitle>
-                <div className="flex flex-wrap gap-2">
-                  <Badge className={getDifficultyColor(quiz.difficulty)}>
-                    {quiz.difficulty}
-                  </Badge>
-                  <Badge variant="outline">
-                    {quiz.questions.length} Question
-                    {quiz.questions.length !== 1 ? 's' : ''}
-                  </Badge>
-                  {quiz.completed && quiz.score !== undefined && (
-                    <Badge
-                      className={
-                        quiz.score >= 70
-                          ? 'bg-green-100 text-green-800 border-green-200'
-                          : 'bg-orange-100 text-orange-800 border-orange-200'
-                      }
-                    >
-                      Score: {quiz.score}%
+      {quizzes.map((quiz) => {
+        const attempted = hasAttempted(quiz);
+        return (
+          <Card
+            key={quiz._id}
+            className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300"
+          >
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                <div className="flex-1 space-y-2">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Brain className="h-5 w-5 text-purple-600" />
+                    {quiz.name}
+                  </CardTitle>
+
+                  {/* Content */}
+                  {quiz.content && (
+                    <p className="text-gray-700 text-sm line-clamp-3">
+                      {quiz.content}
+                    </p>
+                  )}
+
+                  {/* Badges */}
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    <Badge className={getDifficultyColor(quiz.level)}>
+                      {getDifficultyLabel(quiz.level)}
                     </Badge>
+                    {attempted && (
+                      <Badge
+                        className={
+                          quiz.highestScore >= 70
+                            ? "bg-green-100 text-green-800 border-green-200"
+                            : "bg-orange-100 text-orange-800 border-orange-200"
+                        }
+                      >
+                        Highest Score: {quiz.highestScore}%
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {/* Icon trạng thái */}
+                <div className="flex items-start gap-2 mt-2 sm:mt-0">
+                  {attempted ? (
+                    <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0" />
+                  ) : (
+                    <XCircle className="h-6 w-6 text-gray-400 flex-shrink-0" />
                   )}
                 </div>
               </div>
-              {quiz.completed ? (
-                <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
-              ) : (
-                <XCircle className="h-5 w-5 text-gray-400 flex-shrink-0" />
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Created</span>
-                <span className="font-medium text-gray-900">{quiz.createdAt}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Status</span>
-                <span className="font-medium text-gray-900">
-                  {quiz.completed ? 'Completed' : 'Not Started'}
-                </span>
-              </div>
-            </div>
+            </CardHeader>
 
-            <div className="border-t pt-4">
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Sample Question</h4>
-              <p className="text-sm text-gray-700 line-clamp-2">
-                {quiz.questions[0]?.question}
-              </p>
-            </div>
-
-            <div className="flex gap-2 pt-2">
-              <Button
-                variant={quiz.completed ? 'outline' : 'default'}
-                size="sm"
-                className="flex-1"
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                {quiz.completed ? 'Review' : 'Start Quiz'}
-              </Button>
-              <Button variant="outline" size="sm" className="flex-1">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+            {/* Buttons */}
+            <CardContent>
+              <div className="flex justify-end gap-2">
+                {attempted ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-32 flex items-center justify-center text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                    onClick={() => handleStart(quiz._id)}
+                  >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Restart
+                  </Button>
+                ) : null}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-32 flex items-center justify-center text-teal-600 hover:text-teal-700 hover:bg-teal-50"
+                  onClick={() => {
+                    const url = attempted
+                      ? `/quiz/${quiz._id}/questions?review=true`
+                      : `/quiz/${quiz._id}/questions`;
+                    navigate(url);
+                  }}
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  {attempted ? "Review" : "Start Quiz"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-32 flex items-center justify-center text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
