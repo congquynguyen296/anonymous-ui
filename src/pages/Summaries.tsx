@@ -3,7 +3,7 @@ import fileService, { FileDto } from "@/services/file.service";
 import { toast } from 'sonner';
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Input } from "@/components/ui/input";
-import { Search, FileText, Calendar } from "lucide-react";
+import { Search, FileText, Calendar, ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";

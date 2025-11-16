@@ -158,7 +158,15 @@ export default function FileDetail() {
           file={headerFile}
           subjectColor={subject?.color}
           subjectName={subject?.name}
-          onBack={() => navigate(`/subject/${subjectId}`)}
+          onBack={() => {
+            // If coming from Summaries page (no subjectId), go back to Summaries
+            // Otherwise go back to subject detail
+            if (subjectId) {
+              navigate(`/subject/${subjectId}`);
+            } else {
+              navigate('/summaries');
+            }
+          }}
           fileId={fileId}
           onGenerated={loadFileDetail}
         />

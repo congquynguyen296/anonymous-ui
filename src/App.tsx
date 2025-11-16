@@ -48,6 +48,10 @@ const App = () => (
                           element={<FileDetail />}
                         />
                         <Route
+                          path="/files/:fileId"
+                          element={<FileDetail />}
+                        />
+                        <Route
                           path="/quiz/:quizId/questions"
                           element={<QuizQuestions />}
                         />
